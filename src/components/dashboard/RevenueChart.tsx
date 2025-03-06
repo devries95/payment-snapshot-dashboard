@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,11 +12,11 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 
-type PeriodType = 'today' | 'lastMonth' | 'thisMonth';
+type PeriodType = 'yesterday' | 'thisMonth' | 'lastMonth';
 
 // Sample data
 const DATA = {
-  today: [
+  yesterday: [
     { time: '12a', value: 100 },
     { time: '3a', value: 120 },
     { time: '6a', value: 150 },
@@ -25,17 +26,17 @@ const DATA = {
     { time: '6p', value: 390 },
     { time: '9p', value: 415 },
   ],
-  lastMonth: [
-    { time: 'Week 1', value: 12000 },
-    { time: 'Week 2', value: 19000 },
-    { time: 'Week 3', value: 32000 },
-    { time: 'Week 4', value: 53281 },
-  ],
   thisMonth: [
     { time: 'Week 1', value: 8500 },
     { time: 'Week 2', value: 15700 },
     { time: 'Week 3', value: 24982 },
     { time: 'Week 4', value: 0 }, // Future data
+  ],
+  lastMonth: [
+    { time: 'Week 1', value: 12000 },
+    { time: 'Week 2', value: 19000 },
+    { time: 'Week 3', value: 32000 },
+    { time: 'Week 4', value: 53281 },
   ],
 };
 
@@ -78,9 +79,9 @@ export function RevenueChart() {
         <div className="flex items-center gap-4">
           <Tabs defaultValue={period} value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
             <TabsList>
-              <TabsTrigger value="today" className="text-xs">Today</TabsTrigger>
-              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
+              <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
               <TabsTrigger value="thisMonth" className="text-xs">This month</TabsTrigger>
+              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
             </TabsList>
           </Tabs>
           
@@ -147,7 +148,7 @@ export function RevenueChart() {
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-muted-foreground mt-2 text-right">
-          {period === 'today' && 'Current value: €415'}
+          {period === 'yesterday' && 'Current value: €415'}
           {period === 'lastMonth' && 'Final value: €53,281'}  
           {period === 'thisMonth' && 'Current value: €24,982'}
         </div>

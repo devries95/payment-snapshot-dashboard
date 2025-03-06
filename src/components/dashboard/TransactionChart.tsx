@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,11 +12,11 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 
-type PeriodType = 'today' | 'lastMonth' | 'thisMonth';
+type PeriodType = 'yesterday' | 'thisMonth' | 'lastMonth';
 
 // Sample data for transactions
 const DATA = {
-  today: [
+  yesterday: [
     { time: '12a', value: 42 },
     { time: '3a', value: 36 },
     { time: '6a', value: 78 },
@@ -25,17 +26,17 @@ const DATA = {
     { time: '6p', value: 294 },
     { time: '9p', value: 67 },
   ],
-  lastMonth: [
-    { time: 'Week 1', value: 3210 },
-    { time: 'Week 2', value: 4125 },
-    { time: 'Week 3', value: 5290 },
-    { time: 'Week 4', value: 3000 },
-  ],
   thisMonth: [
     { time: 'Week 1', value: 2150 },
     { time: 'Week 2', value: 3677 },
     { time: 'Week 3', value: 2000 },
     { time: 'Week 4', value: 0 }, // Future data
+  ],
+  lastMonth: [
+    { time: 'Week 1', value: 3210 },
+    { time: 'Week 2', value: 4125 },
+    { time: 'Week 3', value: 5290 },
+    { time: 'Week 4', value: 3000 },
   ],
 };
 
@@ -73,9 +74,9 @@ export function TransactionChart() {
         <div className="flex items-center gap-4">
           <Tabs defaultValue={period} value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
             <TabsList>
-              <TabsTrigger value="today" className="text-xs">Today</TabsTrigger>
-              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
+              <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
               <TabsTrigger value="thisMonth" className="text-xs">This month</TabsTrigger>
+              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
             </TabsList>
           </Tabs>
           
@@ -142,7 +143,7 @@ export function TransactionChart() {
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-muted-foreground mt-2 text-right">
-          {period === 'today' && 'Total transactions: 1,324'}
+          {period === 'yesterday' && 'Total transactions: 1,324'}
           {period === 'lastMonth' && 'Total transactions: 15,625'}  
           {period === 'thisMonth' && 'Total transactions: 7,827'}
         </div>
