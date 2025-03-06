@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { StatCard } from './StatCard';
 import { RevenueChart } from './RevenueChart';
+import { TransactionChart } from './TransactionChart';
 import { ReportsList } from './ReportsList';
 
 export default function Dashboard() {
@@ -59,9 +60,14 @@ export default function Dashboard() {
       </div>
       
       {/* Charts and Reports Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
         <RevenueChart />
         <ReportsList />
+      </div>
+      
+      {/* Transaction Chart Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <TransactionChart />
       </div>
     </div>
   );
