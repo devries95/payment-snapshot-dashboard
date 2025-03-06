@@ -59,15 +59,15 @@ export default function Dashboard() {
         />
       </div>
       
-      {/* Charts and Reports Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+      {/* Charts Section - Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <RevenueChart />
-        <ReportsList />
+        <TransactionChart />
       </div>
       
-      {/* Transaction Chart Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <TransactionChart />
+      {/* Reports Section */}
+      <div className="grid grid-cols-1 mb-8">
+        <ReportsList />
       </div>
     </div>
   );

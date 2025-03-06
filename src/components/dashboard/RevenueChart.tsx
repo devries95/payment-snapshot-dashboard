@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,7 +69,7 @@ export function RevenueChart() {
   }, [period]);
 
   return (
-    <Card className="col-span-3 animate-fade-in-up">
+    <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
           <CardTitle className="text-lg">Revenue by time period</CardTitle>
