@@ -5,8 +5,35 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Download, Filter, Settings } from "lucide-react";
+import { ColumnConfig, ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 
-// Mock transaction data
+// Define all available columns
+const allColumns: ColumnConfig[] = [
+  { id: "supplier", label: "Supplier name", visible: true },
+  { id: "zone", label: "Zone description", visible: true },
+  { id: "zoneCode", label: "Zone code", visible: true },
+  { id: "station", label: "Station", visible: true },
+  { id: "department", label: "Department location", visible: true },
+  { id: "parking", label: "Parking ID", visible: true },
+  { id: "date", label: "Date", visible: true },
+  { id: "amount", label: "Amount", visible: true },
+  { id: "orderId", label: "Order ID", visible: false },
+  { id: "paymentId", label: "Payment ID", visible: false },
+  { id: "clientId", label: "Client ID", visible: false },
+  { id: "customerPhone", label: "Customer phone", visible: false },
+  { id: "email", label: "Email", visible: false },
+  { id: "timeZone", label: "Time zone", visible: false },
+  { id: "localTimeStart", label: "Local time start", visible: false },
+  { id: "localTimeStop", label: "Local time stop", visible: false },
+  { id: "duration", label: "Duration", visible: false },
+  { id: "paidMinutes", label: "Paid minutes", visible: false },
+  { id: "insertTime", label: "Insert time", visible: false },
+  { id: "paymentTime", label: "Payment time", visible: false },
+  { id: "approved", label: "Approved", visible: false },
+  { id: "paymentMethod", label: "Payment method", visible: false },
+];
+
+// Extended mock transaction data with all possible fields
 const mockTransactions = Array(50).fill(null).map((_, i) => ({
   id: i + 1,
   supplier: "Philadelphia",
@@ -17,6 +44,20 @@ const mockTransactions = Array(50).fill(null).map((_, i) => ({
   parking: `790,658,${Math.floor(Math.random() * 999)}`,
   date: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   amount: `€${(Math.random() * 1000).toFixed(2)}`,
+  orderId: `ORD-${Math.floor(1000000 + Math.random() * 9000000)}`,
+  paymentId: `PAY-${Math.floor(1000000 + Math.random() * 9000000)}`,
+  clientId: `CLT-${Math.floor(10000 + Math.random() * 90000)}`,
+  customerPhone: `+1 ${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`,
+  email: `customer${i}@example.com`,
+  timeZone: "EST",
+  localTimeStart: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
+  localTimeStop: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
+  duration: `${Math.floor(Math.random() * 180)} mins`,
+  paidMinutes: `${Math.floor(Math.random() * 180)} mins`,
+  insertTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+  paymentTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+  approved: Math.random() > 0.2 ? "Yes" : "No",
+  paymentMethod: ["Credit Card", "PayPal", "Apple Pay", "Google Pay"][Math.floor(Math.random() * 4)],
 }));
 
 type TransactionTableProps = {
@@ -29,12 +70,19 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const [pageSize, setPageSize] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState("1D");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
+  
+  // Get only visible columns
+  const visibleColumns = columns.filter(col => col.visible);
   
   // Filter transactions based on search term
   const filteredTransactions = mockTransactions.filter(transaction => 
-    Object.values(transaction).some(value => 
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    Object.entries(transaction)
+      .filter(([key]) => visibleColumns.some(col => col.id === key))
+      .some(([_, value]) => 
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      )
   );
   
   const paginatedTransactions = filteredTransactions.slice(
@@ -43,6 +91,10 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   );
   
   const totalPages = Math.ceil(filteredTransactions.length / parseInt(pageSize));
+  
+  const handleColumnChange = (updatedColumns: ColumnConfig[]) => {
+    setColumns(updatedColumns);
+  };
   
   return (
     <div className="w-full">
@@ -98,7 +150,12 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
           <Button variant="outline" size="icon" className="h-10 w-10">
             <Filter className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" className="h-10 w-10">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="h-10 w-10"
+            onClick={() => setDrawerOpen(true)}
+          >
             <Settings className="h-4 w-4" />
           </Button>
           <Button className="bg-primary text-white">
@@ -112,27 +169,19 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Supplier name</TableHead>
-              <TableHead>Zone description</TableHead>
-              <TableHead>Zone code</TableHead>
-              <TableHead>Station</TableHead>
-              <TableHead>Department location</TableHead>
-              <TableHead>Parking ID</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Amount</TableHead>
+              {visibleColumns.map((column) => (
+                <TableHead key={column.id}>{column.label}</TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedTransactions.map((transaction) => (
               <TableRow key={transaction.id}>
-                <TableCell>{transaction.supplier}</TableCell>
-                <TableCell>{transaction.zone}</TableCell>
-                <TableCell>{transaction.zoneCode}</TableCell>
-                <TableCell>{transaction.station}</TableCell>
-                <TableCell>{transaction.department}</TableCell>
-                <TableCell>{transaction.parking}</TableCell>
-                <TableCell>{transaction.date}</TableCell>
-                <TableCell>{transaction.amount}</TableCell>
+                {visibleColumns.map((column) => (
+                  <TableCell key={`${transaction.id}-${column.id}`}>
+                    {transaction[column.id as keyof typeof transaction]}
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
           </TableBody>
@@ -193,6 +242,13 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
           </Button>
         </div>
       </div>
+      
+      <ColumnSettingsDrawer 
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        columns={columns}
+        onApplyChanges={handleColumnChange}
+      />
     </div>
   );
 }
