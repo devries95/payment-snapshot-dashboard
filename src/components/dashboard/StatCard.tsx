@@ -25,15 +25,15 @@ type StatCardProps = {
 export function StatCard({ title, value, className, isLoading = false }: StatCardProps) {
   return (
     <Card className={cn("stat-card overflow-hidden animate-fade-in-up", className)}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+      <CardHeader className="flex flex-row items-center justify-between pb-1 space-y-0 pt-3 px-4">
+        <CardTitle className="text-xs font-medium text-muted-foreground">
           {title}
         </CardTitle>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="h-6 w-6 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="h-3.5 w-3.5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -42,11 +42,11 @@ export function StatCard({ title, value, className, isLoading = false }: StatCar
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 pt-0 pb-3">
         {isLoading ? (
-          <div className="h-8 w-24 bg-muted animate-pulse rounded"></div>
+          <div className="h-6 w-20 bg-muted animate-pulse rounded"></div>
         ) : (
-          <div className="text-3xl font-bold">{value}</div>
+          <div className="text-xl font-bold">{value}</div>
         )}
       </CardContent>
     </Card>
