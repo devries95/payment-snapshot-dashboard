@@ -47,7 +47,7 @@ export function ColumnSettingsDrawer({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="h-[85vh] sm:max-w-[500px] mx-auto">
+      <DrawerContent className="fixed inset-y-0 right-0 h-full w-[350px] sm:w-[500px] border-l rounded-none flex flex-col">
         <DrawerHeader className="flex items-center justify-between border-b pb-4">
           <DrawerTitle className="text-2xl">Column settings</DrawerTitle>
           <DrawerClose asChild>
@@ -56,7 +56,7 @@ export function ColumnSettingsDrawer({
             </Button>
           </DrawerClose>
         </DrawerHeader>
-        <div className="px-6 pt-6">
+        <div className="px-6 pt-6 flex-1 overflow-y-auto">
           <h3 className="text-lg font-medium mb-4">Visibility and order</h3>
           <div className="space-y-2">
             {localColumns.map((column) => (
@@ -79,7 +79,7 @@ export function ColumnSettingsDrawer({
             ))}
           </div>
         </div>
-        <div className="px-6 py-6 flex gap-4 border-t mt-6">
+        <div className="px-6 py-6 flex gap-4 border-t mt-auto">
           <Button
             className="w-full bg-purple-700 hover:bg-purple-800 text-white"
             onClick={handleApplyChanges}
