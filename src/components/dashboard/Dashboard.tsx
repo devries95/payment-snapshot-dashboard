@@ -35,18 +35,21 @@ export default function Dashboard() {
               value="€4,156" 
               isLoading={loading}
               className="h-[100px]"
+              id="todays-revenue"
             />
             <StatCard 
               title="Last month's revenue" 
               value="€53,281" 
               isLoading={loading}
               className="h-[100px]"
+              id="last-month-revenue"
             />
             <StatCard 
               title="This month's revenue" 
               value="€24,982" 
               isLoading={loading}
               className="h-[100px]"
+              id="this-month-revenue"
             />
           </div>
         </div>
@@ -63,18 +66,21 @@ export default function Dashboard() {
               value="1,324" 
               isLoading={loading}
               className="h-[100px]"
+              id="todays-transactions"
             />
             <StatCard 
               title="Last month's transactions" 
               value="15,625" 
               isLoading={loading}
               className="h-[100px]"
+              id="last-month-transactions"
             />
             <StatCard 
               title="This month's transactions" 
               value="7,827" 
               isLoading={loading}
               className="h-[100px]"
+              id="this-month-transactions"
             />
           </div>
         </div>
