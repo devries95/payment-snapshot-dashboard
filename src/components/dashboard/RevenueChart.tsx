@@ -117,6 +117,11 @@ export function RevenueChart() {
     return '€24,982';
   };
 
+  // Calculate total value of payment methods for the current period
+  const calculatePaymentMethodsTotal = () => {
+    return PAYMENT_METHOD_DATA[period].reduce((sum, item) => sum + item.value, 0);
+  };
+
   return (
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -215,51 +220,58 @@ export function RevenueChart() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                key={chartKey}
-                data={paymentData}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                barGap={8}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
-                <XAxis 
-                  dataKey="name" 
-                  tickLine={false}
-                  axisLine={false}
-                  stroke="var(--chart-axis)"
-                  fontSize={12}
-                />
-                <YAxis 
-                  tickFormatter={(value) => formatCurrency(value)}
-                  tickLine={false}
-                  axisLine={false}
-                  stroke="var(--chart-axis)"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  formatter={(value) => [formatCurrency(value as number), 'Revenue']}
-                  contentStyle={{ 
-                    borderRadius: '8px', 
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid hsl(var(--border))'
-                  }}
-                />
-                <Legend 
-                  align="center" 
-                  verticalAlign="bottom"
-                  wrapperStyle={{ paddingTop: 15 }}
-                />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
-                  {paymentData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={PAYMENT_METHOD_COLORS[entry.name as keyof typeof PAYMENT_METHOD_COLORS]} 
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="relative h-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  key={chartKey}
+                  data={paymentData}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+                  barGap={8}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
+                  <XAxis 
+                    dataKey="name" 
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="var(--chart-axis)"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    tickFormatter={(value) => formatCurrency(value)}
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="var(--chart-axis)"
+                    fontSize={12}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [formatCurrency(value as number), 'Revenue']}
+                    contentStyle={{ 
+                      borderRadius: '8px', 
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid hsl(var(--border))'
+                    }}
+                  />
+                  <Legend 
+                    align="center" 
+                    verticalAlign="bottom"
+                    wrapperStyle={{ paddingTop: 15 }}
+                  />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
+                    {paymentData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={PAYMENT_METHOD_COLORS[entry.name as keyof typeof PAYMENT_METHOD_COLORS]} 
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              
+              {/* Total value overlay for payment methods chart */}
+              <div className="absolute top-2 right-8 bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border border-border/40 shadow-sm">
+                <span className="text-xs font-medium">Total: {formatCurrency(calculatePaymentMethodsTotal())}</span>
+              </div>
+            </div>
           )}
         </div>
         <div className="text-xs text-muted-foreground mt-2 text-right">
