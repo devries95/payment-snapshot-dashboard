@@ -86,19 +86,22 @@ export default function Reports() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border/40 backdrop-blur-sm bg-background/95 sticky top-0 z-10">
-        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center">
-          <Link to="/" className="flex items-center gap-2 mr-4">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-[1.2rem] w-[1.2rem]" />
-            </Button>
-          </Link>
-          <h1 className="text-xl font-semibold">Reports</h1>
+        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-2 mr-4">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-[1.2rem] w-[1.2rem]" />
+              </Button>
+            </Link>
+            <h1 className="text-xl font-semibold">Payment Dashboard</h1>
+          </div>
         </div>
       </header>
       
       {/* Main Content */}
       <main className="max-w-[1400px] mx-auto p-6">
         <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-4">Reports</h1>
           <div className="mb-1 text-sm">Month</div>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="w-full md:w-[240px]">
