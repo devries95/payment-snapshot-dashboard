@@ -31,11 +31,18 @@ export default function Dashboard() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <StatCard 
-              title="Today's revenue" 
+              title="Yesterday's revenue" 
               value="€4,156" 
               isLoading={loading}
               className="h-[100px]"
-              id="todays-revenue"
+              id="yesterday-revenue"
+            />
+            <StatCard 
+              title="Current month's revenue" 
+              value="€24,982" 
+              isLoading={loading}
+              className="h-[100px]"
+              id="current-month-revenue"
             />
             <StatCard 
               title="Last month's revenue" 
@@ -43,13 +50,6 @@ export default function Dashboard() {
               isLoading={loading}
               className="h-[100px]"
               id="last-month-revenue"
-            />
-            <StatCard 
-              title="This month's revenue" 
-              value="€24,982" 
-              isLoading={loading}
-              className="h-[100px]"
-              id="this-month-revenue"
             />
           </div>
         </div>
@@ -62,11 +62,18 @@ export default function Dashboard() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <StatCard 
-              title="Today's transactions" 
+              title="Yesterday's transactions" 
               value="1,324" 
               isLoading={loading}
               className="h-[100px]"
-              id="todays-transactions"
+              id="yesterday-transactions"
+            />
+            <StatCard 
+              title="Current month's transactions" 
+              value="7,827" 
+              isLoading={loading}
+              className="h-[100px]"
+              id="current-month-transactions"
             />
             <StatCard 
               title="Last month's transactions" 
@@ -74,13 +81,6 @@ export default function Dashboard() {
               isLoading={loading}
               className="h-[100px]"
               id="last-month-transactions"
-            />
-            <StatCard 
-              title="This month's transactions" 
-              value="7,827" 
-              isLoading={loading}
-              className="h-[100px]"
-              id="this-month-transactions"
             />
           </div>
         </div>

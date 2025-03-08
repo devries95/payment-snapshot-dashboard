@@ -121,7 +121,7 @@ export function RevenueChart() {
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Revenue by time period</CardTitle>
+          <CardTitle className="text-lg">Revenue</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
