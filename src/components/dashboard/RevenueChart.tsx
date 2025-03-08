@@ -122,6 +122,11 @@ export function RevenueChart() {
     return PAYMENT_METHOD_DATA[period].reduce((sum, item) => sum + item.value, 0);
   };
 
+  // Calculate total value of revenue for the current period
+  const calculateRevenueTotal = () => {
+    return DATA[period][DATA[period].length - 1].value;
+  };
+
   return (
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -173,52 +178,59 @@ export function RevenueChart() {
       <CardContent>
         <div className={`chart-container h-[280px] ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
           {view === 'revenue' ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                key={chartKey}
-                data={data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(270, 70%, 65%)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="hsl(270, 70%, 65%)" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
-                <XAxis 
-                  dataKey="time" 
-                  tickLine={false}
-                  axisLine={false}
-                  stroke="var(--chart-axis)"
-                  fontSize={12}
-                />
-                <YAxis 
-                  tickFormatter={(value) => formatCurrency(value)}
-                  tickLine={false}
-                  axisLine={false}
-                  stroke="var(--chart-axis)"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  formatter={(value) => [formatCurrency(value as number), 'Revenue']}
-                  contentStyle={{ 
-                    borderRadius: '8px', 
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid hsl(var(--border))'
-                  }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="hsl(270, 70%, 65%)" 
-                  strokeWidth={2}
-                  fillOpacity={1} 
-                  fill="url(#colorValue)" 
-                  animationDuration={1000}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div className="relative h-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  key={chartKey}
+                  data={data}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(270, 70%, 65%)" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(270, 70%, 65%)" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
+                  <XAxis 
+                    dataKey="time" 
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="var(--chart-axis)"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    tickFormatter={(value) => formatCurrency(value)}
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="var(--chart-axis)"
+                    fontSize={12}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [formatCurrency(value as number), 'Revenue']}
+                    contentStyle={{ 
+                      borderRadius: '8px', 
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid hsl(var(--border))'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="hsl(270, 70%, 65%)" 
+                    strokeWidth={2}
+                    fillOpacity={1} 
+                    fill="url(#colorValue)" 
+                    animationDuration={1000}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+              
+              {/* Total value overlay for revenue chart */}
+              <div className="absolute top-2 right-8 bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border border-border/40 shadow-sm">
+                <span className="text-xs font-medium">Total: {formatCurrency(calculateRevenueTotal())}</span>
+              </div>
+            </div>
           ) : (
             <div className="relative h-full">
               <ResponsiveContainer width="100%" height="100%">
