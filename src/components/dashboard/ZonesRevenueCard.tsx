@@ -88,7 +88,7 @@ export function ZonesRevenueCard() {
   }, [period]);
 
   return (
-    <Card className="animate-fade-in-up h-full">
+    <Card className="animate-fade-in-up h-full flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <CardTitle className="text-lg">Revenue by Zone</CardTitle>
@@ -116,10 +116,10 @@ export function ZonesRevenueCard() {
         </div>
       </CardHeader>
       
-      <CardContent>
-        <div className="grid grid-cols-2 gap-6">
+      <CardContent className="flex-1 flex items-center pb-6">
+        <div className="grid grid-cols-2 gap-6 w-full h-full">
           {/* Pie Chart */}
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center h-full">
             <div className="h-48 w-48 relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -148,9 +148,9 @@ export function ZonesRevenueCard() {
             </div>
           </div>
           
-          {/* Zone List - Vertically centered */}
-          <div className="flex flex-col h-full justify-center">
-            <div className={`flex flex-col space-y-3 ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
+          {/* Zone List - Distributed evenly with the container height */}
+          <div className="flex flex-col justify-between h-full py-1">
+            <div className={`flex flex-col justify-between h-full ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
               {zones.map(zone => (
                 <div 
                   key={zone.id}
