@@ -5,6 +5,7 @@ import { RevenueChart } from './RevenueChart';
 import { TransactionChart } from './TransactionChart';
 import { ReportsList } from './ReportsList';
 import { PaymentTrendsChart } from './PaymentTrendsChart';
+import { ZonesRevenueCard } from './ZonesRevenueCard';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -139,6 +140,16 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <RevenueChart />
+          <ZonesRevenueCard />
+        </div>
+      </div>
+      
+      <div className="mb-6">
+        <div className="mb-2">
+          <h2 className="text-lg font-medium">Transaction Analysis</h2>
+          <p className="text-sm text-muted-foreground">Card usage and transaction breakdown</p>
+        </div>
+        <div className="grid grid-cols-1">
           <TransactionChart />
         </div>
       </div>
