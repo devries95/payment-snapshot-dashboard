@@ -22,7 +22,7 @@ type ZoneData = {
   isUnderperforming: boolean;
 };
 
-// Zone data for different periods with colors
+// Zone data for different periods with colors, with Industrial District removed
 const ZONE_DATA = {
   thisMonth: [
     { id: 'zone1', name: 'Downtown District', revenue: 5823, color: '#4285F4', isUnderperforming: true },
@@ -31,7 +31,6 @@ const ZONE_DATA = {
     { id: 'zone4', name: 'Business Park', revenue: 2357, color: '#EA4335', isUnderperforming: true },
     { id: 'zone5', name: 'Residential Area', revenue: 1980, color: '#8B5CF6', isUnderperforming: true },
     { id: 'zone6', name: 'University Campus', revenue: 1523, color: '#D946EF', isUnderperforming: true },
-    { id: 'zone7', name: 'Industrial District', revenue: 1120, color: '#0EA5E9', isUnderperforming: true },
   ],
   lastMonth: [
     { id: 'zone1', name: 'Downtown District', revenue: 6125, color: '#4285F4', isUnderperforming: true },
@@ -40,7 +39,6 @@ const ZONE_DATA = {
     { id: 'zone4', name: 'Business Park', revenue: 2912, color: '#EA4335', isUnderperforming: true },
     { id: 'zone5', name: 'Residential Area', revenue: 2104, color: '#8B5CF6', isUnderperforming: true },
     { id: 'zone6', name: 'University Campus', revenue: 1780, color: '#D946EF', isUnderperforming: true },
-    { id: 'zone7', name: 'Industrial District', revenue: 1350, color: '#0EA5E9', isUnderperforming: true },
   ],
 };
 
@@ -150,9 +148,9 @@ export function ZonesRevenueCard() {
             </div>
           </div>
           
-          {/* Zone List */}
-          <div className="flex flex-col h-full justify-between">
-            <div className={`space-y-3 ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
+          {/* Zone List - Improved vertical alignment */}
+          <div className="flex flex-col h-full">
+            <div className={`flex flex-col justify-start space-y-3 ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
               {zones.map(zone => (
                 <div 
                   key={zone.id}
