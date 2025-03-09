@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -67,10 +66,10 @@ const ApiDocs = () => {
                 Use these variables in your templates to personalize messages:
               </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li><code>{{customer_name}}</code> - Customer's full name</li>
-                <li><code>{{amount}}</code> - Payment amount</li>
-                <li><code>{{date}}</code> - Transaction date</li>
-                <li><code>{{reference}}</code> - Transaction reference</li>
+                <li><code>{"{{customer_name}}"}</code> - Customer's full name</li>
+                <li><code>{"{{amount}}"}</code> - Payment amount</li>
+                <li><code>{"{{date}}"}</code> - Transaction date</li>
+                <li><code>{"{{reference}}"}</code> - Transaction reference</li>
               </ul>
             </div>
             <div className="p-4 border rounded-md">
@@ -116,11 +115,11 @@ const ApiDocs = () => {
                 Use these variables in your templates to personalize emails:
               </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li><code>{{first_name}}</code> - Recipient's first name</li>
-                <li><code>{{last_name}}</code> - Recipient's last name</li>
-                <li><code>{{order_id}}</code> - Order identifier</li>
-                <li><code>{{invoice_number}}</code> - Invoice number</li>
-                <li><code>{{payment_amount}}</code> - Payment amount</li>
+                <li><code>{"{{first_name}}"}</code> - Recipient's first name</li>
+                <li><code>{"{{last_name}}"}</code> - Recipient's last name</li>
+                <li><code>{"{{order_id}}"}</code> - Order identifier</li>
+                <li><code>{"{{invoice_number}}"}</code> - Invoice number</li>
+                <li><code>{"{{payment_amount}}"}</code> - Payment amount</li>
               </ul>
             </div>
           </div>
@@ -202,7 +201,6 @@ const ApiDocs = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
       <header className="border-b border-border/40 backdrop-blur-sm bg-background/95 sticky top-0 z-10">
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -219,7 +217,6 @@ const ApiDocs = () => {
       <main className="flex-1">
         <div className="max-w-[1400px] mx-auto px-6 py-8">
           <div className="flex">
-            {/* Sidebar Navigation */}
             <div className="w-1/4 pr-8">
               <h2 className="text-lg font-semibold mb-6">General</h2>
               <div className="space-y-3">
@@ -258,7 +255,6 @@ const ApiDocs = () => {
               </div>
             </div>
             
-            {/* Content Area */}
             <div className="w-3/4">
               {sections.find(section => section.id === activeSection)?.content}
               
