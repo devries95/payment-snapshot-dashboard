@@ -148,9 +148,9 @@ export function ZonesRevenueCard() {
             </div>
           </div>
           
-          {/* Zone List - Improved vertical alignment */}
-          <div className="flex flex-col h-full">
-            <div className={`flex flex-col justify-start space-y-3 ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
+          {/* Zone List - Vertically centered */}
+          <div className="flex flex-col h-full justify-center">
+            <div className={`flex flex-col space-y-3 ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
               {zones.map(zone => (
                 <div 
                   key={zone.id}
