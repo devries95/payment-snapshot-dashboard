@@ -121,7 +121,7 @@ export function ProjectedRevenueChart() {
       </CardHeader>
       
       <CardContent>
-        <div className="chart-container h-[280px]">
+        <div className="chart-container h-[280px] pb-8">
           <div className="relative h-full">
             {/* Move the legend here, above the chart */}
             <div className="mb-4 flex items-center gap-4">
