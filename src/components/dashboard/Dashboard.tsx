@@ -6,6 +6,7 @@ import { TransactionChart } from './TransactionChart';
 import { ReportsList } from './ReportsList';
 import { PaymentTrendsChart } from './PaymentTrendsChart';
 import { ZonesRevenueCard } from './ZonesRevenueCard';
+import { ProjectedRevenueChart } from './ProjectedRevenueChart';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -121,6 +122,15 @@ export default function Dashboard() {
             />
           </div>
         </div>
+      </div>
+      
+      {/* New Section: Projected Annual Revenue */}
+      <div className="mb-6">
+        <div className="mb-2">
+          <h2 className="text-lg font-medium">Revenue Forecast</h2>
+          <p className="text-sm text-muted-foreground">Projected annual revenue based on historical data</p>
+        </div>
+        <ProjectedRevenueChart />
       </div>
       
       {/* Payment Trends & Zone Analysis - Side by Side */}

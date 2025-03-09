@@ -58,6 +58,6 @@ const Index = () => {
       </main>
     </div>
   );
-};
+}
 
 export default Index;
