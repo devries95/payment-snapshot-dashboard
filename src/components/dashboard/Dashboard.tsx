@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { StatCard } from './StatCard';
 import { RevenueChart } from './RevenueChart';
@@ -123,7 +122,7 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* Payment Analysis & Zone Revenue - Side by Side */}
+      {/* Payment Trends & Zone Analysis - Side by Side */}
       <div className="mb-6">
         <div className="mb-2">
           <h2 className="text-lg font-medium">Payment Trends & Zone Analysis</h2>
