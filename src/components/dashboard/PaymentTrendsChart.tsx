@@ -82,16 +82,6 @@ export function PaymentTrendsChart() {
     }, 300);
   };
 
-  // Period display text
-  const getPeriodText = () => {
-    switch(period) {
-      case 'yesterday': return 'Yesterday';
-      case 'thisMonth': return 'This month';
-      case 'lastMonth': return 'Last month';
-      default: return 'This month';
-    }
-  };
-
   return (
     <Card className="animate-fade-in-up col-span-1 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -126,7 +116,6 @@ export function PaymentTrendsChart() {
           <div className="flex flex-wrap justify-between">
             <div className="mb-4 flex items-baseline">
               <div className="mr-6">
-                <div className="text-sm text-muted-foreground">{getPeriodText()}</div>
                 <div className="text-3xl font-bold">{formatCurrency(totalAmount)}</div>
               </div>
               
@@ -141,7 +130,7 @@ export function PaymentTrendsChart() {
               <LineChart
                 key={chartKey}
                 data={currentData}
-                margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+                margin={{ top: 10, right: 20, left: 10, bottom: 30 }}
               >
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
@@ -193,7 +182,11 @@ export function PaymentTrendsChart() {
                     border: '1px solid hsl(var(--border))'
                   }}
                 />
-                <Legend />
+                <Legend 
+                  verticalAlign="bottom" 
+                  align="right" 
+                  wrapperStyle={{ paddingTop: 20 }}
+                />
                 <Line 
                   yAxisId="left"
                   type="monotone" 

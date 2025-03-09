@@ -66,32 +66,11 @@ export function TransactionChart() {
   // Calculate total transactions
   const totalTransactions = data.reduce((sum, entry) => sum + entry.value, 0);
 
-  // Custom renderer for the labels
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = outerRadius * 1.1;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text 
-        x={x} 
-        y={y} 
-        fill={COLORS[index % COLORS.length]}
-        textAnchor={x > cx ? 'start' : 'end'} 
-        dominantBaseline="central"
-        className="text-xs font-medium"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
-
   return (
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Card Type Distribution</CardTitle>
+          <CardTitle className="text-lg">Credit Card Distribution</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
@@ -120,18 +99,31 @@ export function TransactionChart() {
         <div className={`chart-container h-[280px] ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart key={chartKey}>
+              <defs>
+                {COLORS.map((color, index) => (
+                  <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity={1} />
+                    <stop offset="100%" stopColor={color} stopOpacity={0.7} />
+                  </linearGradient>
+                ))}
+              </defs>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
-                labelLine={true}
-                label={renderCustomizedLabel}
-                outerRadius={80}
+                innerRadius={60}
+                outerRadius={90}
                 fill="#8884d8"
+                paddingAngle={2}
                 dataKey="value"
+                stroke="#fff"
+                strokeWidth={2}
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={`url(#gradient-${index})`} 
+                  />
                 ))}
               </Pie>
               <Tooltip
