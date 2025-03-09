@@ -10,17 +10,39 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Sample data for payment trends
-const DATA = [
-  { date: '1 Apr', amount: 5680, transactions: 245 },
-  { date: '5 Apr', amount: 7450, transactions: 312 },
-  { date: '10 Apr', amount: 6780, transactions: 287 },
-  { date: '15 Apr', amount: 8120, transactions: 342 },
-  { date: '20 Apr', amount: 7890, transactions: 331 },
-  { date: '25 Apr', amount: 8560, transactions: 364 },
-  { date: '30 Apr', amount: 9800, transactions: 410 },
-];
+// Sample data for different periods
+const DATA = {
+  yesterday: [
+    { date: '12a', amount: 100, transactions: 10 },
+    { date: '3a', amount: 120, transactions: 14 },
+    { date: '6a', amount: 150, transactions: 22 },
+    { date: '9a', amount: 220, transactions: 35 },
+    { date: '12p', amount: 290, transactions: 42 },
+    { date: '3p', amount: 350, transactions: 58 },
+    { date: '6p', amount: 390, transactions: 67 },
+    { date: '9p', amount: 415, transactions: 74 },
+  ],
+  thisMonth: [
+    { date: '1 Apr', amount: 5680, transactions: 245 },
+    { date: '5 Apr', amount: 7450, transactions: 312 },
+    { date: '10 Apr', amount: 6780, transactions: 287 },
+    { date: '15 Apr', amount: 8120, transactions: 342 },
+    { date: '20 Apr', amount: 7890, transactions: 331 },
+    { date: '25 Apr', amount: 8560, transactions: 364 },
+    { date: '30 Apr', amount: 9800, transactions: 410 },
+  ],
+  lastMonth: [
+    { date: '1 Mar', amount: 4200, transactions: 180 },
+    { date: '5 Mar', amount: 5600, transactions: 230 },
+    { date: '10 Mar', amount: 6100, transactions: 255 },
+    { date: '15 Mar', amount: 7300, transactions: 300 },
+    { date: '20 Mar', amount: 8500, transactions: 350 },
+    { date: '25 Mar', amount: 9200, transactions: 380 },
+    { date: '31 Mar', amount: 10800, transactions: 450 },
+  ],
+};
 
 // Format currency
 const formatCurrency = (value: number) => {
@@ -37,43 +59,82 @@ const formatNumber = (value: number) => {
   return new Intl.NumberFormat('en-US').format(value);
 };
 
+type PeriodType = 'yesterday' | 'thisMonth' | 'lastMonth';
+
 export function PaymentTrendsChart() {
-  // Calculate totals
-  const totalAmount = DATA.reduce((sum, item) => sum + item.amount, 0);
-  const totalTransactions = DATA.reduce((sum, item) => sum + item.transactions, 0);
+  const [period, setPeriod] = useState<PeriodType>('thisMonth');
+  const [chartKey, setChartKey] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  
+  // Get current data based on selected period
+  const currentData = DATA[period];
+  
+  // Calculate totals for current period
+  const totalAmount = currentData.reduce((sum, item) => sum + item.amount, 0);
+  const totalTransactions = currentData.reduce((sum, item) => sum + item.transactions, 0);
+
+  const handlePeriodChange = (value: string) => {
+    setAnimating(true);
+    setTimeout(() => {
+      setPeriod(value as PeriodType);
+      setChartKey(prev => prev + 1);
+      setAnimating(false);
+    }, 300);
+  };
+
+  // Period display text
+  const getPeriodText = () => {
+    switch(period) {
+      case 'yesterday': return 'Yesterday';
+      case 'thisMonth': return 'This month';
+      case 'lastMonth': return 'Last month';
+      default: return 'This month';
+    }
+  };
 
   return (
     <Card className="animate-fade-in-up col-span-1 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Payment Trends</CardTitle>
+          <CardTitle className="text-lg">Cleared Transactions</CardTitle>
         </div>
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Download CSV</DropdownMenuItem>
-            <DropdownMenuItem>View full report</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-4">
+          <Tabs defaultValue={period} value={period} onValueChange={handlePeriodChange}>
+            <TabsList>
+              <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
+              <TabsTrigger value="thisMonth" className="text-xs">This month</TabsTrigger>
+              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Download CSV</DropdownMenuItem>
+              <DropdownMenuItem>View full report</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap justify-between">
             <div className="mb-4">
-              <div className="text-sm text-muted-foreground">This month</div>
+              <div className="text-sm text-muted-foreground">{getPeriodText()}</div>
               <div className="text-3xl font-bold">{formatCurrency(totalAmount)}</div>
             </div>
           </div>
           
-          <div className="h-[280px]">
+          <div className={`h-[280px] ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
-                data={DATA}
+                key={chartKey}
+                data={currentData}
                 margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
               >
                 <defs>
@@ -154,7 +215,7 @@ export function PaymentTrendsChart() {
           </div>
           
           <div className="text-xs text-muted-foreground mt-2 text-right">
-            All Outlets • {formatNumber(totalTransactions)} transactions this month
+            All zones • {formatNumber(totalTransactions)} transactions {getPeriodText().toLowerCase()}
           </div>
         </div>
       </CardContent>
