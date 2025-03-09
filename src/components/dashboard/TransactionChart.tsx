@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoreHorizontal } from "lucide-react";
@@ -14,31 +14,30 @@ import {
 
 type PeriodType = 'yesterday' | 'thisMonth' | 'lastMonth';
 
-// Sample data for transactions
+// Sample data for credit card types
 const DATA = {
   yesterday: [
-    { time: '12a', value: 42 },
-    { time: '3a', value: 36 },
-    { time: '6a', value: 78 },
-    { time: '9a', value: 145 },
-    { time: '12p', value: 287 },
-    { time: '3p', value: 375 },
-    { time: '6p', value: 294 },
-    { time: '9p', value: 67 },
+    { name: 'Visa', value: 145 },
+    { name: 'Mastercard', value: 167 },
+    { name: 'Discovery', value: 42 },
+    { name: 'N/A', value: 20 },
   ],
   thisMonth: [
-    { time: 'Week 1', value: 2150 },
-    { time: 'Week 2', value: 3677 },
-    { time: 'Week 3', value: 2000 },
-    { time: 'Week 4', value: 0 }, // Future data
+    { name: 'Visa', value: 3230 },
+    { name: 'Mastercard', value: 3897 },
+    { name: 'Discovery', value: 580 },
+    { name: 'N/A', value: 120 },
   ],
   lastMonth: [
-    { time: 'Week 1', value: 3210 },
-    { time: 'Week 2', value: 4125 },
-    { time: 'Week 3', value: 5290 },
-    { time: 'Week 4', value: 3000 },
+    { name: 'Visa', value: 6455 },
+    { name: 'Mastercard', value: 7120 },
+    { name: 'Discovery', value: 1520 },
+    { name: 'N/A', value: 530 },
   ],
 };
+
+// Colors for the pie chart segments
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 // Format number with commas
 const formatNumber = (value: number) => {
@@ -64,11 +63,35 @@ export function TransactionChart() {
     return () => clearTimeout(timer);
   }, [period]);
 
+  // Calculate total transactions
+  const totalTransactions = data.reduce((sum, entry) => sum + entry.value, 0);
+
+  // Custom renderer for the labels
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = outerRadius * 1.1;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill={COLORS[index % COLORS.length]}
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        className="text-xs font-medium"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   return (
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Transactions</CardTitle>
+          <CardTitle className="text-lg">Card Type Distribution</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
@@ -94,35 +117,24 @@ export function TransactionChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className={`chart-container h-[280px] ${animating ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`chart-container h-[280px] ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              key={chartKey}
-              data={data}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="colorTransactions" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(160, 70%, 45%)" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="hsl(160, 70%, 45%)" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
-              <XAxis 
-                dataKey="time" 
-                tickLine={false}
-                axisLine={false}
-                stroke="var(--chart-axis)"
-                fontSize={12}
-              />
-              <YAxis 
-                tickFormatter={(value) => formatNumber(value)}
-                tickLine={false}
-                axisLine={false}
-                stroke="var(--chart-axis)"
-                fontSize={12}
-              />
-              <Tooltip 
+            <PieChart key={chartKey}>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                labelLine={true}
+                label={renderCustomizedLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip
                 formatter={(value) => [formatNumber(value as number), 'Transactions']}
                 contentStyle={{ 
                   borderRadius: '8px', 
@@ -130,22 +142,18 @@ export function TransactionChart() {
                   border: '1px solid hsl(var(--border))'
                 }}
               />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke="hsl(160, 70%, 45%)" 
-                strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#colorTransactions)" 
-                animationDuration={1000}
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+                iconType="circle"
+                iconSize={10}
               />
-            </AreaChart>
+            </PieChart>
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-muted-foreground mt-2 text-right">
-          {period === 'yesterday' && 'Total transactions: 1,324'}
-          {period === 'lastMonth' && 'Total transactions: 15,625'}  
-          {period === 'thisMonth' && 'Total transactions: 7,827'}
+          Total transactions: {formatNumber(totalTransactions)}
         </div>
       </CardContent>
     </Card>

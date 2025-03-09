@@ -124,9 +124,15 @@ export function PaymentTrendsChart() {
       <CardContent>
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap justify-between">
-            <div className="mb-4">
-              <div className="text-sm text-muted-foreground">{getPeriodText()}</div>
-              <div className="text-3xl font-bold">{formatCurrency(totalAmount)}</div>
+            <div className="mb-4 flex items-baseline">
+              <div className="mr-6">
+                <div className="text-sm text-muted-foreground">{getPeriodText()}</div>
+                <div className="text-3xl font-bold">{formatCurrency(totalAmount)}</div>
+              </div>
+              
+              <div className="text-lg font-medium text-muted-foreground">
+                {formatNumber(totalTransactions)} transactions
+              </div>
             </div>
           </div>
           
@@ -212,10 +218,6 @@ export function PaymentTrendsChart() {
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-          
-          <div className="text-xs text-muted-foreground mt-2 text-right">
-            All zones • {formatNumber(totalTransactions)} transactions {getPeriodText().toLowerCase()}
           </div>
         </div>
       </CardContent>
