@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { StatCard } from './StatCard';
 import { RevenueChart } from './RevenueChart';
