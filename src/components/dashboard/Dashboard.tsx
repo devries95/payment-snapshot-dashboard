@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { StatCard } from './StatCard';
 import { RevenueChart } from './RevenueChart';
@@ -128,7 +129,7 @@ export default function Dashboard() {
           <h2 className="text-lg font-medium">Payment Trends & Zone Analysis</h2>
           <p className="text-sm text-muted-foreground">Monthly payment trends and zone revenue distribution</p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <PaymentTrendsChart />
           <ZonesRevenueCard />
         </div>
@@ -140,7 +141,7 @@ export default function Dashboard() {
           <h2 className="text-lg font-medium">Payment Distribution</h2>
           <p className="text-sm text-muted-foreground">Payment methods and credit card usage</p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RevenueChart />
           <TransactionChart />
         </div>

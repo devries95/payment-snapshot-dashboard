@@ -83,7 +83,7 @@ export function PaymentTrendsChart() {
   };
 
   return (
-    <Card className="animate-fade-in-up col-span-1 lg:col-span-2">
+    <Card className="animate-fade-in-up col-span-1">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
           <CardTitle className="text-lg">Cleared Transactions</CardTitle>
