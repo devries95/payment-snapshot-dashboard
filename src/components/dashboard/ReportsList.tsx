@@ -1,15 +1,9 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, MoreHorizontal, Download } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Report = {
   id: string;
@@ -53,57 +47,53 @@ export function ReportsList() {
   };
 
   return (
-    <Card className="col-span-1 animate-fade-in-up">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg flex items-center">
+    <div className="col-span-1 animate-fade-in-up">
+      <div className="flex items-center justify-between pb-4">
+        <h2 className="text-lg font-semibold flex items-center">
           Reports
           <Link to="/reports">
             <ArrowRight className="h-4 w-4 ml-1" />
           </Link>
-        </CardTitle>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link to="/reports">View all reports</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/reports">Create custom report</Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {REPORTS.map((report) => (
-            <Card 
-              key={report.id}
-              className="bg-muted/40 hover:bg-muted/60 transition-colors duration-200 border rounded-lg overflow-hidden"
-            >
-              <CardContent className="p-4">
-                <div className="space-y-2">
+        </h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        {REPORTS.map((report) => (
+          <Card 
+            key={report.id}
+            className="overflow-hidden bg-blue-50 hover:bg-blue-100 border-none transition-colors duration-200"
+          >
+            <CardContent className="p-4 flex flex-col h-full">
+              <div className="flex justify-between items-start mb-2">
+                <div>
                   <h3 className="font-medium text-base">{report.title}</h3>
                   <p className="text-sm text-muted-foreground">{report.description}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full mt-2 flex items-center justify-center gap-2"
-                    onClick={() => handleDownload(report.id)}
-                    disabled={downloadingId === report.id}
-                  >
-                    <Download className={`h-4 w-4 ${downloadingId === report.id ? 'animate-pulse' : ''}`} />
-                    {downloadingId === report.id ? 'Downloading...' : 'Download'}
-                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  aria-label="Download"
+                  onClick={() => handleDownload(report.id)}
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="mt-auto pt-4">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={() => handleDownload(report.id)}
+                  disabled={downloadingId === report.id}
+                >
+                  <Download className={`h-4 w-4 ${downloadingId === report.id ? 'animate-pulse' : ''}`} />
+                  {downloadingId === report.id ? 'Downloading...' : 'Download Report'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 }

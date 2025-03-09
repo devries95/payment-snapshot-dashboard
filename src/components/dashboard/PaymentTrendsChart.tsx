@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,8 +41,6 @@ export function PaymentTrendsChart() {
   // Calculate totals
   const totalAmount = DATA.reduce((sum, item) => sum + item.amount, 0);
   const totalTransactions = DATA.reduce((sum, item) => sum + item.transactions, 0);
-  const averageAmount = Math.round(totalAmount / totalTransactions);
-  const averageItemsPerSale = 2.8; // Example static value
 
   return (
     <Card className="animate-fade-in-up col-span-1 lg:col-span-2">
@@ -67,22 +65,8 @@ export function PaymentTrendsChart() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap justify-between">
             <div className="mb-4">
-              <div className="text-sm text-muted-foreground">This month your payments total</div>
+              <div className="text-sm text-muted-foreground">This month</div>
               <div className="text-3xl font-bold">{formatCurrency(totalAmount)}</div>
-              <div className="text-xs text-muted-foreground mt-1">That's €1,780.24 more than this time last month!</div>
-            </div>
-            
-            <div className="flex flex-col items-end gap-4">
-              <div className="text-right">
-                <div className="text-sm text-muted-foreground">Average Payment Value</div>
-                <div className="text-2xl font-bold">{formatCurrency(averageAmount)}</div>
-              </div>
-              
-              <div className="text-right">
-                <div className="text-sm text-muted-foreground">Average Items Per Payment</div>
-                <div className="text-2xl font-bold">{averageItemsPerSale}</div>
-                <div className="text-xs text-muted-foreground mt-1">0.35 items than last month</div>
-              </div>
             </div>
           </div>
           
@@ -90,28 +74,49 @@ export function PaymentTrendsChart() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={DATA}
-                margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+                margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
+                <defs>
+                  <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorTrans" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.1)" />
                 <XAxis 
                   dataKey="date" 
                   tickLine={false}
                   axisLine={false}
-                  stroke="var(--chart-axis)"
+                  stroke="rgba(0,0,0,0.3)"
                   fontSize={12}
                 />
                 <YAxis 
+                  yAxisId="left"
+                  tickFormatter={(value) => `€${value}`}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="rgba(0,0,0,0.3)"
+                  fontSize={12}
+                  domain={['auto', 'auto']}
+                />
+                <YAxis 
+                  yAxisId="right"
+                  orientation="right"
                   tickFormatter={(value) => `${value}`}
                   tickLine={false}
                   axisLine={false}
-                  stroke="var(--chart-axis)"
+                  stroke="rgba(0,0,0,0.3)"
                   fontSize={12}
-                  domain={[0, 10000]}
+                  domain={['auto', 'auto']}
                 />
                 <Tooltip 
                   formatter={(value, name) => {
-                    if (name === 'amount') return [formatCurrency(value as number), 'Amount'];
-                    if (name === 'transactions') return [formatNumber(value as number), 'Transactions'];
+                    if (name === 'Payment Amount') return [formatCurrency(value as number), name];
+                    if (name === 'Transactions') return [formatNumber(value as number), name];
                     return [value, name];
                   }}
                   labelFormatter={(label) => `Date: ${label}`}
@@ -121,21 +126,28 @@ export function PaymentTrendsChart() {
                     border: '1px solid hsl(var(--border))'
                   }}
                 />
+                <Legend />
                 <Line 
+                  yAxisId="left"
                   type="monotone" 
-                  dataKey="amount" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  dot={{ r: 4, fill: "hsl(var(--primary))" }}
-                  activeDot={{ r: 6 }}
+                  dataKey="amount"
+                  name="Payment Amount" 
+                  stroke="#8B5CF6"
+                  strokeWidth={3}
+                  dot={{ r: 0 }}
+                  activeDot={{ r: 6, fill: "#8B5CF6" }}
+                  fill="url(#colorAmount)"
                 />
                 <Line 
+                  yAxisId="right"
                   type="monotone" 
-                  dataKey="transactions" 
-                  stroke="hsl(var(--secondary))" 
-                  strokeWidth={2}
-                  dot={{ r: 4, fill: "hsl(var(--secondary))" }}
-                  activeDot={{ r: 6 }}
+                  dataKey="transactions"
+                  name="Transactions" 
+                  stroke="#0EA5E9" 
+                  strokeWidth={3}
+                  dot={{ r: 0 }}
+                  activeDot={{ r: 6, fill: "#0EA5E9" }}
+                  fill="url(#colorTrans)"
                 />
               </LineChart>
             </ResponsiveContainer>
