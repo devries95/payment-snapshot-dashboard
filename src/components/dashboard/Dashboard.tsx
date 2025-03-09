@@ -123,27 +123,27 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* Payment Analysis Charts - Side by Side */}
+      {/* Payment Analysis & Zone Revenue - Side by Side */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Payment Analysis</h2>
-          <p className="text-sm text-muted-foreground">Monthly payment trends and distribution</p>
+          <h2 className="text-lg font-medium">Payment Trends & Zone Analysis</h2>
+          <p className="text-sm text-muted-foreground">Monthly payment trends and zone revenue distribution</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <PaymentTrendsChart />
-          <RevenueChart />
+          <ZonesRevenueCard />
         </div>
       </div>
       
-      {/* Performance Metrics Section */}
+      {/* Payment Methods & Transaction Types Section */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Performance Metrics</h2>
-          <p className="text-sm text-muted-foreground">Transaction breakdown and credit card usage</p>
+          <h2 className="text-lg font-medium">Payment Distribution</h2>
+          <p className="text-sm text-muted-foreground">Payment methods and credit card usage</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <RevenueChart />
           <TransactionChart />
-          <ZonesRevenueCard />
         </div>
       </div>
       
