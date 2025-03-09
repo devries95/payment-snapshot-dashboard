@@ -123,6 +123,18 @@ export function ProjectedRevenueChart() {
       <CardContent>
         <div className="chart-container h-[280px]">
           <div className="relative h-full">
+            {/* Move the legend here, above the chart */}
+            <div className="mb-4 flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-[#8884d8]"></div>
+                <span className="text-xs text-muted-foreground">Actual</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-[#82ca9d]"></div>
+                <span className="text-xs text-muted-foreground">Projected</span>
+              </div>
+            </div>
+            
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={data}
@@ -194,18 +206,6 @@ export function ProjectedRevenueChart() {
             {/* Overlay showing projected annual total */}
             <div className="absolute top-2 right-8 bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border border-border/40 shadow-sm">
               <span className="text-xs font-medium">Projected Annual Total: {formatCurrency(totalProjectedRevenue)}</span>
-            </div>
-            
-            {/* Updated legend to match PaymentTrendsChart style */}
-            <div className="absolute bottom-2 right-8 flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-[#8884d8]"></div>
-                <span className="text-xs text-muted-foreground">Actual</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-[#82ca9d]"></div>
-                <span className="text-xs text-muted-foreground">Projected</span>
-              </div>
             </div>
           </div>
         </div>
