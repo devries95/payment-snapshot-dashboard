@@ -123,34 +123,26 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* Payment Trends Chart */}
+      {/* Payment Analysis Charts - Side by Side */}
       <div className="mb-6">
         <div className="mb-2">
           <h2 className="text-lg font-medium">Payment Analysis</h2>
-          <p className="text-sm text-muted-foreground">Monthly payment trends and analytics</p>
+          <p className="text-sm text-muted-foreground">Monthly payment trends and distribution</p>
         </div>
-        <PaymentTrendsChart />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <PaymentTrendsChart />
+          <RevenueChart />
+        </div>
       </div>
       
-      {/* Charts Section - Side by Side */}
+      {/* Performance Metrics Section */}
       <div className="mb-6">
         <div className="mb-2">
           <h2 className="text-lg font-medium">Performance Metrics</h2>
-          <p className="text-sm text-muted-foreground">Detailed visualization of revenue and transaction trends</p>
+          <p className="text-sm text-muted-foreground">Transaction breakdown and credit card usage</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <RevenueChart />
           <TransactionChart />
-        </div>
-      </div>
-      
-      {/* Transaction Analysis & Zone Revenue Section */}
-      <div className="mb-6">
-        <div className="mb-2">
-          <h2 className="text-lg font-medium">Zone Analysis</h2>
-          <p className="text-sm text-muted-foreground">Revenue analysis by geographic zone</p>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <ZonesRevenueCard />
         </div>
       </div>
