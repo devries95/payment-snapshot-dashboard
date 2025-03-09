@@ -1,5 +1,5 @@
 
-import { MoreHorizontal, Banknote, CreditCard } from "lucide-react";
+import { MoreHorizontal, Banknote, CreditCard, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { 
   Card,
@@ -63,9 +63,9 @@ export function StatCard({
               <div className="flex items-center justify-between">
                 <div className="text-xl font-bold">{value}</div>
                 {type === 'revenue' ? (
-                  <Banknote className="h-5 w-5 text-green-500" />
+                  <Banknote className="h-5 w-5 text-blue-500" />
                 ) : (
-                  <CreditCard className="h-5 w-5 text-blue-500" />
+                  <Car className="h-5 w-5 text-green-500" />
                 )}
               </div>
               {dateInfo && (

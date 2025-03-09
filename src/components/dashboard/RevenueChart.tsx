@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoreHorizontal } from "lucide-react";
@@ -139,12 +139,6 @@ export function RevenueChart() {
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     border: '1px solid hsl(var(--border))'
                   }}
-                />
-                <Legend 
-                  align="center" 
-                  verticalAlign="bottom"
-                  wrapperStyle={{ paddingTop: 15 }}
-                  formatter={(value) => value}
                 />
                 <Bar dataKey="value" name="" radius={[4, 4, 0, 0]} animationDuration={1000}>
                   {paymentData.map((entry, index) => (
