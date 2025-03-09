@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import Dashboard from '@/components/dashboard/Dashboard';
 import { Button } from '@/components/ui/button';
-import { Globe, User } from 'lucide-react';
+import { Globe, User, FileCode } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [mounted, setMounted] = useState(false);
@@ -27,7 +28,13 @@ const Index = () => {
       <header className="border-b border-border/40 backdrop-blur-sm bg-background/95 sticky top-0 z-10">
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Payment Dashboard</h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Link to="/api-docs">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <FileCode className="h-[1rem] w-[1rem]" />
+                <span>Set-up API</span>
+              </Button>
+            </Link>
             <Button variant="ghost" size="icon">
               <Globe className="h-[1.2rem] w-[1.2rem]" />
             </Button>

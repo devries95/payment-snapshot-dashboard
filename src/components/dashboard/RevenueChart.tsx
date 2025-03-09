@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MoreHorizontal, CreditCard, Wallet, ToggleLeft, ToggleRight } from "lucide-react";
+import { MoreHorizontal, CreditCard, Wallet, ToggleLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
@@ -135,14 +134,6 @@ export function RevenueChart() {
         </div>
         
         <div className="flex items-center gap-4">
-          <Tabs defaultValue={period} value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
-            <TabsList>
-              <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
-              <TabsTrigger value="thisMonth" className="text-xs">This month</TabsTrigger>
-              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          
           <Button 
             variant="outline" 
             size="sm" 
@@ -161,6 +152,14 @@ export function RevenueChart() {
               </>
             )}
           </Button>
+          
+          <Tabs defaultValue={period} value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
+            <TabsList>
+              <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
+              <TabsTrigger value="thisMonth" className="text-xs">This month</TabsTrigger>
+              <TabsTrigger value="lastMonth" className="text-xs">Last month</TabsTrigger>
+            </TabsList>
+          </Tabs>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

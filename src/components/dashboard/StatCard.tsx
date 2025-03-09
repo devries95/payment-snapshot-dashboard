@@ -22,9 +22,17 @@ type StatCardProps = {
   className?: string;
   isLoading?: boolean;
   id?: string;
+  dateInfo?: string;
 };
 
-export function StatCard({ title, value, className, isLoading = false, id = "transactions" }: StatCardProps) {
+export function StatCard({ 
+  title, 
+  value, 
+  className, 
+  isLoading = false, 
+  id = "transactions",
+  dateInfo
+}: StatCardProps) {
   return (
     <Link to={`/transactions/${id}`} className="no-underline text-foreground">
       <Card className={cn("stat-card overflow-hidden animate-fade-in-up cursor-pointer", className)}>
@@ -49,7 +57,12 @@ export function StatCard({ title, value, className, isLoading = false, id = "tra
           {isLoading ? (
             <div className="h-6 w-20 bg-muted animate-pulse rounded"></div>
           ) : (
-            <div className="text-xl font-bold">{value}</div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold">{value}</div>
+              {dateInfo && (
+                <div className="text-xs text-muted-foreground">{dateInfo}</div>
+              )}
+            </div>
           )}
         </CardContent>
       </Card>

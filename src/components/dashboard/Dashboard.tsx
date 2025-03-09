@@ -7,6 +7,29 @@ import { ReportsList } from './ReportsList';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
+  
+  // Get yesterday's date
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayFormatted = yesterday.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  // Get current month
+  const currentMonth = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long'
+  });
+  
+  // Get last month
+  const lastMonth = new Date();
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+  const lastMonthFormatted = lastMonth.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long'
+  });
 
   // Simulate loading state
   useEffect(() => {
@@ -34,22 +57,25 @@ export default function Dashboard() {
               title="Yesterday's revenue" 
               value="€4,156" 
               isLoading={loading}
-              className="h-[100px]"
+              className="h-[115px]"
               id="yesterday-revenue"
+              dateInfo={yesterdayFormatted}
             />
             <StatCard 
               title="Current month's revenue" 
               value="€24,982" 
               isLoading={loading}
-              className="h-[100px]"
+              className="h-[115px]"
               id="current-month-revenue"
+              dateInfo={currentMonth}
             />
             <StatCard 
               title="Last month's revenue" 
               value="€53,281" 
               isLoading={loading}
-              className="h-[100px]"
+              className="h-[115px]"
               id="last-month-revenue"
+              dateInfo={lastMonthFormatted}
             />
           </div>
         </div>
@@ -65,22 +91,25 @@ export default function Dashboard() {
               title="Yesterday's transactions" 
               value="1,324" 
               isLoading={loading}
-              className="h-[100px]"
+              className="h-[115px]"
               id="yesterday-transactions"
+              dateInfo={yesterdayFormatted}
             />
             <StatCard 
               title="Current month's transactions" 
               value="7,827" 
               isLoading={loading}
-              className="h-[100px]"
+              className="h-[115px]"
               id="current-month-transactions"
+              dateInfo={currentMonth}
             />
             <StatCard 
               title="Last month's transactions" 
               value="15,625" 
               isLoading={loading}
-              className="h-[100px]"
+              className="h-[115px]"
               id="last-month-transactions"
+              dateInfo={lastMonthFormatted}
             />
           </div>
         </div>
