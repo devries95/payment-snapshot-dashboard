@@ -1,5 +1,5 @@
 
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Banknote, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { 
   Card,
@@ -23,6 +23,7 @@ type StatCardProps = {
   isLoading?: boolean;
   id?: string;
   dateInfo?: string;
+  type?: 'revenue' | 'transaction';
 };
 
 export function StatCard({ 
@@ -31,7 +32,8 @@ export function StatCard({
   className, 
   isLoading = false, 
   id = "transactions",
-  dateInfo
+  dateInfo,
+  type = 'transaction'
 }: StatCardProps) {
   return (
     <Link to={`/transactions/${id}`} className="no-underline text-foreground">
@@ -58,7 +60,14 @@ export function StatCard({
             <div className="h-6 w-20 bg-muted animate-pulse rounded"></div>
           ) : (
             <div className="space-y-1">
-              <div className="text-xl font-bold">{value}</div>
+              <div className="flex items-center justify-between">
+                <div className="text-xl font-bold">{value}</div>
+                {type === 'revenue' ? (
+                  <Banknote className="h-5 w-5 text-green-500" />
+                ) : (
+                  <CreditCard className="h-5 w-5 text-blue-500" />
+                )}
+              </div>
               {dateInfo && (
                 <div className="text-xs text-muted-foreground">{dateInfo}</div>
               )}

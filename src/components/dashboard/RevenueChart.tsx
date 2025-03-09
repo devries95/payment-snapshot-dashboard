@@ -144,8 +144,9 @@ export function RevenueChart() {
                   align="center" 
                   verticalAlign="bottom"
                   wrapperStyle={{ paddingTop: 15 }}
+                  formatter={(value) => value}
                 />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
+                <Bar dataKey="value" name="" radius={[4, 4, 0, 0]} animationDuration={1000}>
                   {paymentData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 

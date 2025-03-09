@@ -61,6 +61,7 @@ export default function Dashboard() {
               className="h-[115px]"
               id="yesterday-revenue"
               dateInfo={yesterdayFormatted}
+              type="revenue"
             />
             <StatCard 
               title="Current month's revenue" 
@@ -69,6 +70,7 @@ export default function Dashboard() {
               className="h-[115px]"
               id="current-month-revenue"
               dateInfo={currentMonth}
+              type="revenue"
             />
             <StatCard 
               title="Last month's revenue" 
@@ -77,6 +79,7 @@ export default function Dashboard() {
               className="h-[115px]"
               id="last-month-revenue"
               dateInfo={lastMonthFormatted}
+              type="revenue"
             />
           </div>
         </div>
@@ -95,6 +98,7 @@ export default function Dashboard() {
               className="h-[115px]"
               id="yesterday-transactions"
               dateInfo={yesterdayFormatted}
+              type="transaction"
             />
             <StatCard 
               title="Current month's transactions" 
@@ -103,6 +107,7 @@ export default function Dashboard() {
               className="h-[115px]"
               id="current-month-transactions"
               dateInfo={currentMonth}
+              type="transaction"
             />
             <StatCard 
               title="Last month's transactions" 
@@ -111,6 +116,7 @@ export default function Dashboard() {
               className="h-[115px]"
               id="last-month-transactions"
               dateInfo={lastMonthFormatted}
+              type="transaction"
             />
           </div>
         </div>

@@ -135,9 +135,9 @@ export function TransactionChart() {
                 }}
               />
               <Legend 
-                layout="horizontal" 
-                verticalAlign="bottom" 
-                align="center"
+                layout="vertical" 
+                verticalAlign="middle" 
+                align="right"
                 iconType="circle"
                 iconSize={10}
               />

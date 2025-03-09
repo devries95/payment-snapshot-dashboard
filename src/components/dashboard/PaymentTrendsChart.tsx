@@ -130,7 +130,7 @@ export function PaymentTrendsChart() {
               <LineChart
                 key={chartKey}
                 data={currentData}
-                margin={{ top: 10, right: 20, left: 10, bottom: 30 }}
+                margin={{ top: 40, right: 20, left: 10, bottom: 10 }}
               >
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
@@ -183,9 +183,9 @@ export function PaymentTrendsChart() {
                   }}
                 />
                 <Legend 
-                  verticalAlign="bottom" 
+                  verticalAlign="top" 
                   align="right" 
-                  wrapperStyle={{ paddingTop: 20 }}
+                  wrapperStyle={{ paddingBottom: 10 }}
                 />
                 <Line 
                   yAxisId="left"
