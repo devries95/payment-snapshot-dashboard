@@ -113,14 +113,25 @@ export function PaymentTrendsChart() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-6">
-          <div className="flex flex-wrap justify-between">
-            <div className="mb-4 flex items-baseline">
+          <div className="flex flex-wrap justify-between items-center">
+            <div className="flex items-baseline">
               <div className="mr-6">
                 <div className="text-3xl font-bold">{formatCurrency(totalAmount)}</div>
               </div>
               
               <div className="text-lg font-medium text-muted-foreground">
                 {formatNumber(totalTransactions)} transactions
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-center">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-[#8B5CF6] mr-2"></div>
+                <span className="text-xs">Payment Amount</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-[#0EA5E9] mr-2"></div>
+                <span className="text-xs">Transactions</span>
               </div>
             </div>
           </div>
@@ -130,7 +141,7 @@ export function PaymentTrendsChart() {
               <LineChart
                 key={chartKey}
                 data={currentData}
-                margin={{ top: 40, right: 20, left: 10, bottom: 10 }}
+                margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
               >
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
@@ -181,11 +192,6 @@ export function PaymentTrendsChart() {
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                     border: '1px solid hsl(var(--border))'
                   }}
-                />
-                <Legend 
-                  verticalAlign="top" 
-                  align="right" 
-                  wrapperStyle={{ paddingBottom: 10 }}
                 />
                 <Line 
                   yAxisId="left"

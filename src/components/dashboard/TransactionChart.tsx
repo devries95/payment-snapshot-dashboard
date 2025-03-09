@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoreHorizontal } from "lucide-react";
@@ -36,7 +36,7 @@ const DATA = {
   ],
 };
 
-// Colors for the pie chart segments
+// Colors for the bar chart segments
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 // Format number with commas
@@ -98,34 +98,24 @@ export function TransactionChart() {
       <CardContent>
         <div className={`chart-container h-[280px] ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart key={chartKey}>
-              <defs>
-                {COLORS.map((color, index) => (
-                  <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={color} stopOpacity={1} />
-                    <stop offset="100%" stopColor={color} stopOpacity={0.7} />
-                  </linearGradient>
-                ))}
-              </defs>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                fill="#8884d8"
-                paddingAngle={2}
-                dataKey="value"
-                stroke="#fff"
-                strokeWidth={2}
-              >
-                {data.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={`url(#gradient-${index})`} 
-                  />
-                ))}
-              </Pie>
+            <BarChart
+              key={chartKey}
+              data={data}
+              margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            >
+              <XAxis 
+                dataKey="name" 
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
+              />
+              <YAxis 
+                tickFormatter={(value) => value.toString()}
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+                stroke="rgba(0,0,0,0.3)"
+              />
               <Tooltip
                 formatter={(value) => [formatNumber(value as number), 'Transactions']}
                 contentStyle={{ 
@@ -134,14 +124,15 @@ export function TransactionChart() {
                   border: '1px solid hsl(var(--border))'
                 }}
               />
-              <Legend 
-                layout="vertical" 
-                verticalAlign="middle" 
-                align="right"
-                iconType="circle"
-                iconSize={10}
-              />
-            </PieChart>
+              <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
+                {data.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]} 
+                  />
+                ))}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </div>
         <div className="text-xs text-muted-foreground mt-2 text-right">
