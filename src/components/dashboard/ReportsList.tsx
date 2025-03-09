@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, ArrowRight, MoreHorizontal, Download, File } from "lucide-react";
+import { ArrowRight, MoreHorizontal, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
@@ -14,74 +14,42 @@ import {
 type Report = {
   id: string;
   title: string;
-  date: string;
-  fileSize: string;
-  fileType: string;
-  iconColor: string;
+  description: string;
 };
 
 const REPORTS: Report[] = [
   { 
     id: "1", 
-    title: "Annual Report for Q2 2025", 
-    date: "2.4 MB • DOCX", 
-    fileSize: "2.4 MB", 
-    fileType: "DOCX", 
-    iconColor: "text-blue-500" 
+    title: "Remittance advice", 
+    description: "Displays the amount owed by EasyPark"
   },
   { 
     id: "2", 
-    title: "Annual Report for Q4 2024", 
-    date: "6.8 MB • DOCX", 
-    fileSize: "6.8 MB", 
-    fileType: "DOCX", 
-    iconColor: "text-blue-500" 
+    title: "Transaction overview", 
+    description: "Displays each individual parking transaction"
   },
   { 
     id: "3", 
-    title: "Shareholder Meeting Notes", 
-    date: "239 KB • MP4", 
-    fileSize: "239 KB", 
-    fileType: "MP4", 
-    iconColor: "text-red-500" 
+    title: "Commission report", 
+    description: "Displays parking transactions based on different roles"
   },
   { 
     id: "4", 
-    title: "Annual Report for Q1 2025", 
-    date: "8.2 MB • DOCX", 
-    fileSize: "8.2 MB", 
-    fileType: "DOCX", 
-    iconColor: "text-blue-500" 
+    title: "Fines overview", 
+    description: "Displays all parking fines that were paid"
   },
 ];
 
 export function ReportsList() {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
-  const handleDownload = (e: React.MouseEvent, id: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
+  const handleDownload = (id: string) => {
     setDownloadingId(id);
     
     // Simulate download
     setTimeout(() => {
       setDownloadingId(null);
     }, 1500);
-  };
-
-  const getFileIcon = (fileType: string) => {
-    switch (fileType) {
-      case 'PDF':
-        return <File className="h-10 w-10 text-red-500" />;
-      case 'MP4':
-        return <File className="h-10 w-10 text-red-500" />;
-      case 'XLSX':
-        return <File className="h-10 w-10 text-green-500" />;
-      case 'DOCX':
-      default:
-        return <File className="h-10 w-10 text-blue-500" />;
-    }
   };
 
   return (
@@ -112,36 +80,27 @@ export function ReportsList() {
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {REPORTS.map((report) => (
-            <Link 
+            <Card 
               key={report.id}
-              to="/reports"
-              className="block"
+              className="bg-muted/40 hover:bg-muted/60 transition-colors duration-200 border rounded-lg overflow-hidden"
             >
-              <div className="group relative border rounded-md p-4 hover:shadow-md transition-all duration-200">
-                <div className="flex items-start mb-2">
-                  {getFileIcon(report.fileType)}
+              <CardContent className="p-4">
+                <div className="space-y-2">
+                  <h3 className="font-medium text-base">{report.title}</h3>
+                  <p className="text-sm text-muted-foreground">{report.description}</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-2 flex items-center justify-center gap-2"
+                    onClick={() => handleDownload(report.id)}
+                    disabled={downloadingId === report.id}
+                  >
+                    <Download className={`h-4 w-4 ${downloadingId === report.id ? 'animate-pulse' : ''}`} />
+                    {downloadingId === report.id ? 'Downloading...' : 'Download'}
+                  </Button>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium line-clamp-2 min-h-[40px]">{report.title}</span>
-                  <span className="text-xs text-muted-foreground mt-1">{report.fileSize} • {report.fileType}</span>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={(e) => e.preventDefault()}>View details</DropdownMenuItem>
-                    <DropdownMenuItem onClick={(e) => handleDownload(e, report.id)}>Download</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </Link>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </CardContent>

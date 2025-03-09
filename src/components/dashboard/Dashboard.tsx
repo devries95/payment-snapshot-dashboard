@@ -4,6 +4,7 @@ import { StatCard } from './StatCard';
 import { RevenueChart } from './RevenueChart';
 import { TransactionChart } from './TransactionChart';
 import { ReportsList } from './ReportsList';
+import { PaymentTrendsChart } from './PaymentTrendsChart';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -113,6 +114,15 @@ export default function Dashboard() {
             />
           </div>
         </div>
+      </div>
+      
+      {/* Payment Trends Chart */}
+      <div className="mb-6">
+        <div className="mb-2">
+          <h2 className="text-lg font-medium">Payment Analysis</h2>
+          <p className="text-sm text-muted-foreground">Monthly payment trends and analytics</p>
+        </div>
+        <PaymentTrendsChart />
       </div>
       
       {/* Charts Section - Side by Side */}
