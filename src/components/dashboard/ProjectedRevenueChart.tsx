@@ -196,15 +196,15 @@ export function ProjectedRevenueChart() {
               <span className="text-xs font-medium">Projected Annual Total: {formatCurrency(totalProjectedRevenue)}</span>
             </div>
             
-            {/* Projected legend indicators */}
-            <div className="absolute bottom-2 right-8 flex items-center gap-4 bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border border-border/40 shadow-sm">
+            {/* Updated legend to match PaymentTrendsChart style */}
+            <div className="absolute bottom-2 right-8 flex items-center gap-4">
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#8884d8]"></div>
-                <span className="text-xs">Actual</span>
+                <div className="h-3 w-3 rounded-full bg-[#8884d8]"></div>
+                <span className="text-xs text-muted-foreground">Actual</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#82ca9d]"></div>
-                <span className="text-xs">Projected</span>
+                <div className="h-3 w-3 rounded-full bg-[#82ca9d]"></div>
+                <span className="text-xs text-muted-foreground">Projected</span>
               </div>
             </div>
           </div>

@@ -11,38 +11,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { formatCurrency } from './chart/ChartData';
 
 type PeriodType = 'yesterday' | 'thisMonth' | 'lastMonth';
 
-// Sample data for credit card types
+// Sample data for credit card types with monetary values
 const DATA = {
   yesterday: [
-    { name: 'Visa', value: 145 },
-    { name: 'Mastercard', value: 167 },
-    { name: 'Discovery', value: 42 },
-    { name: 'N/A', value: 20 },
+    { name: 'Visa', value: 1450 },
+    { name: 'Mastercard', value: 1670 },
+    { name: 'Discovery', value: 820 },
+    { name: 'N/A', value: 216 },
   ],
   thisMonth: [
-    { name: 'Visa', value: 3230 },
-    { name: 'Mastercard', value: 3897 },
-    { name: 'Discovery', value: 580 },
-    { name: 'N/A', value: 120 },
+    { name: 'Visa', value: 32300 },
+    { name: 'Mastercard', value: 38970 },
+    { name: 'Discovery', value: 5800 },
+    { name: 'N/A', value: 1200 },
   ],
   lastMonth: [
-    { name: 'Visa', value: 6455 },
-    { name: 'Mastercard', value: 7120 },
-    { name: 'Discovery', value: 1520 },
-    { name: 'N/A', value: 530 },
+    { name: 'Visa', value: 64550 },
+    { name: 'Mastercard', value: 71200 },
+    { name: 'Discovery', value: 15200 },
+    { name: 'N/A', value: 5300 },
   ],
 };
 
 // Colors for the bar chart segments
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-// Format number with commas
-const formatNumber = (value: number) => {
-  return new Intl.NumberFormat('en-US').format(value);
-};
 
 export function TransactionChart() {
   const [period, setPeriod] = useState<PeriodType>('thisMonth');
@@ -63,14 +59,14 @@ export function TransactionChart() {
     return () => clearTimeout(timer);
   }, [period]);
 
-  // Calculate total transactions
-  const totalTransactions = data.reduce((sum, entry) => sum + entry.value, 0);
+  // Calculate total revenue
+  const totalRevenue = data.reduce((sum, entry) => sum + entry.value, 0);
 
   return (
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Credit Card Distribution</CardTitle>
+          <CardTitle className="text-lg">Credit Card Revenue</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
@@ -112,14 +108,14 @@ export function TransactionChart() {
                   axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
                 />
                 <YAxis 
-                  tickFormatter={(value) => value.toString()}
+                  tickFormatter={(value) => formatCurrency(value)}
                   tick={{ fontSize: 12 }}
                   tickLine={false}
                   axisLine={false}
                   stroke="rgba(0,0,0,0.3)"
                 />
                 <Tooltip
-                  formatter={(value) => [formatNumber(value as number), 'Transactions']}
+                  formatter={(value) => [formatCurrency(value as number), 'Revenue']}
                   contentStyle={{ 
                     borderRadius: '8px', 
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -137,9 +133,9 @@ export function TransactionChart() {
               </BarChart>
             </ResponsiveContainer>
             
-            {/* Total transactions overlay */}
+            {/* Total revenue overlay */}
             <div className="absolute top-2 right-8 bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border border-border/40 shadow-sm">
-              <span className="text-xs font-medium">Total: {formatNumber(totalTransactions)}</span>
+              <span className="text-xs font-medium">Total: {formatCurrency(totalRevenue)}</span>
             </div>
           </div>
         </div>

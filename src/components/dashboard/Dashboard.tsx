@@ -124,15 +124,6 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* New Section: Projected Annual Revenue */}
-      <div className="mb-6">
-        <div className="mb-2">
-          <h2 className="text-lg font-medium">Revenue Forecast</h2>
-          <p className="text-sm text-muted-foreground">Projected annual revenue based on historical data</p>
-        </div>
-        <ProjectedRevenueChart />
-      </div>
-      
       {/* Payment Trends & Zone Analysis - Side by Side */}
       <div className="mb-6">
         <div className="mb-2">
@@ -155,6 +146,15 @@ export default function Dashboard() {
           <RevenueChart />
           <TransactionChart />
         </div>
+      </div>
+      
+      {/* New Section: Projected Annual Revenue - MOVED HERE */}
+      <div className="mb-6">
+        <div className="mb-2">
+          <h2 className="text-lg font-medium">Revenue Forecast</h2>
+          <p className="text-sm text-muted-foreground">Projected annual revenue based on historical data</p>
+        </div>
+        <ProjectedRevenueChart />
       </div>
       
       {/* Reports Section */}
