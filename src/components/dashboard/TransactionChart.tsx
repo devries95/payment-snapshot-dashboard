@@ -143,9 +143,6 @@ export function TransactionChart() {
             </div>
           </div>
         </div>
-        <div className="text-xs text-muted-foreground mt-2 text-right">
-          Total transactions: {formatNumber(totalTransactions)}
-        </div>
       </CardContent>
     </Card>
   );

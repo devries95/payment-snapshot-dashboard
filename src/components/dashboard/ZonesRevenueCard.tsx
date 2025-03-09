@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Link } from 'react-router-dom';
 
 type PeriodType = 'thisMonth' | 'lastMonth';
 
@@ -89,7 +90,7 @@ export function ZonesRevenueCard() {
 
   return (
     <Card className="animate-fade-in-up h-full flex flex-col">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardHeader className="flex flex-row items-center justify-between pb-12">
         <div>
           <CardTitle className="text-lg">Revenue by Zone</CardTitle>
         </div>
@@ -152,26 +153,31 @@ export function ZonesRevenueCard() {
           <div className="flex flex-col justify-between h-full py-1">
             <div className={`flex flex-col justify-between h-full ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
               {zones.map(zone => (
-                <div 
+                <Link 
                   key={zone.id}
-                  className={`flex items-center justify-between p-2 rounded-md transition-colors ${
-                    zone.isUnderperforming ? 'bg-gray-100 dark:bg-gray-800' : ''
-                  }`}
+                  to={`/transactions/${zone.id}`}
+                  className="no-underline text-foreground"
                 >
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: zone.color }}
-                    ></div>
-                    <span className="text-sm font-medium">{zone.name}</span>
+                  <div 
+                    className={`flex items-center justify-between p-2 rounded-md transition-colors ${
+                      zone.isUnderperforming ? 'bg-gray-100 dark:bg-gray-800' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: zone.color }}
+                      ></div>
+                      <span className="text-sm font-medium">{zone.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm">{formatCurrency(zone.revenue)}</span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm">{formatCurrency(zone.revenue)}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

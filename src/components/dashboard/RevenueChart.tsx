@@ -82,7 +82,7 @@ export function RevenueChart() {
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Payment method distribution</CardTitle>
+          <CardTitle className="text-lg">Payment Methods Distribution</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
@@ -156,9 +156,6 @@ export function RevenueChart() {
               <span className="text-xs font-medium">Total: {formatCurrency(calculatePaymentMethodsTotal())}</span>
             </div>
           </div>
-        </div>
-        <div className="text-xs text-muted-foreground mt-2 text-right">
-          Total: {formatCurrency(calculatePaymentMethodsTotal())}
         </div>
       </CardContent>
     </Card>

@@ -138,7 +138,7 @@ export default function Dashboard() {
       {/* Payment Methods & Transaction Types Section */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Payment Distribution</h2>
+          <h2 className="text-lg font-medium">Payment Methods Distribution</h2>
           <p className="text-sm text-muted-foreground">Payment methods and credit card usage</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
