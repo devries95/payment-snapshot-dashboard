@@ -25,8 +25,8 @@ type ZoneData = {
 // Zone data for different periods with colors
 const ZONE_DATA = {
   thisMonth: [
-    { id: 'zone1', name: 'Downtown District', revenue: 5823, color: '#4285F4', isUnderperforming: false },
-    { id: 'zone2', name: 'Airport Zone', revenue: 4270, color: '#34A853', isUnderperforming: false },
+    { id: 'zone1', name: 'Downtown District', revenue: 5823, color: '#4285F4', isUnderperforming: true },
+    { id: 'zone2', name: 'Airport Zone', revenue: 4270, color: '#34A853', isUnderperforming: true },
     { id: 'zone3', name: 'Shopping Center', revenue: 3524, color: '#FBBC05', isUnderperforming: true },
     { id: 'zone4', name: 'Business Park', revenue: 2357, color: '#EA4335', isUnderperforming: true },
     { id: 'zone5', name: 'Residential Area', revenue: 1980, color: '#8B5CF6', isUnderperforming: true },
@@ -34,9 +34,9 @@ const ZONE_DATA = {
     { id: 'zone7', name: 'Industrial District', revenue: 1120, color: '#0EA5E9', isUnderperforming: true },
   ],
   lastMonth: [
-    { id: 'zone1', name: 'Downtown District', revenue: 6125, color: '#4285F4', isUnderperforming: false },
-    { id: 'zone2', name: 'Airport Zone', revenue: 5842, color: '#34A853', isUnderperforming: false },
-    { id: 'zone3', name: 'Shopping Center', revenue: 4612, color: '#FBBC05', isUnderperforming: false },
+    { id: 'zone1', name: 'Downtown District', revenue: 6125, color: '#4285F4', isUnderperforming: true },
+    { id: 'zone2', name: 'Airport Zone', revenue: 5842, color: '#34A853', isUnderperforming: true },
+    { id: 'zone3', name: 'Shopping Center', revenue: 4612, color: '#FBBC05', isUnderperforming: true },
     { id: 'zone4', name: 'Business Park', revenue: 2912, color: '#EA4335', isUnderperforming: true },
     { id: 'zone5', name: 'Residential Area', revenue: 2104, color: '#8B5CF6', isUnderperforming: true },
     { id: 'zone6', name: 'University Campus', revenue: 1780, color: '#D946EF', isUnderperforming: true },

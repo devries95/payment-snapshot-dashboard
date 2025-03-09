@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { StatCard } from './StatCard';
 import { RevenueChart } from './RevenueChart';
@@ -139,17 +140,18 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <RevenueChart />
-          <ZonesRevenueCard />
+          <TransactionChart />
         </div>
       </div>
       
+      {/* Transaction Analysis & Zone Revenue Section */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Transaction Analysis</h2>
-          <p className="text-sm text-muted-foreground">Card usage and transaction breakdown</p>
+          <h2 className="text-lg font-medium">Zone Analysis</h2>
+          <p className="text-sm text-muted-foreground">Revenue analysis by geographic zone</p>
         </div>
-        <div className="grid grid-cols-1">
-          <TransactionChart />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <ZonesRevenueCard />
         </div>
       </div>
       
