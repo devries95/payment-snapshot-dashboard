@@ -97,43 +97,51 @@ export function TransactionChart() {
       </CardHeader>
       <CardContent>
         <div className={`chart-container h-[280px] ${animating ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              key={chartKey}
-              data={data}
-              margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-            >
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
-              />
-              <YAxis 
-                tickFormatter={(value) => value.toString()}
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-                stroke="rgba(0,0,0,0.3)"
-              />
-              <Tooltip
-                formatter={(value) => [formatNumber(value as number), 'Transactions']}
-                contentStyle={{ 
-                  borderRadius: '8px', 
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid hsl(var(--border))'
-                }}
-              />
-              <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
-                {data.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={COLORS[index % COLORS.length]} 
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="relative h-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                key={chartKey}
+                data={data}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                barGap={8}
+              >
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
+                />
+                <YAxis 
+                  tickFormatter={(value) => value.toString()}
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke="rgba(0,0,0,0.3)"
+                />
+                <Tooltip
+                  formatter={(value) => [formatNumber(value as number), 'Transactions']}
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid hsl(var(--border))'
+                  }}
+                />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
+                  {data.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={COLORS[index % COLORS.length]} 
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            
+            {/* Total transactions overlay */}
+            <div className="absolute top-2 right-8 bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full border border-border/40 shadow-sm">
+              <span className="text-xs font-medium">Total: {formatNumber(totalTransactions)}</span>
+            </div>
+          </div>
         </div>
         <div className="text-xs text-muted-foreground mt-2 text-right">
           Total transactions: {formatNumber(totalTransactions)}
