@@ -15,15 +15,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+export type ColumnConfig = {
+  id: string;
+  label: string;
+  visible: boolean;
+  sticky?: boolean; // Indicates if the column should be fixed
+};
+
 const allColumns: ColumnConfig[] = [
-  { id: "supplier", label: "Supplier name", visible: true },
+  { id: "supplier", label: "Supplier name", visible: true, sticky: true },
   { id: "zone", label: "Zone description", visible: true },
   { id: "zoneCode", label: "Zone code", visible: true },
   { id: "station", label: "Station", visible: true },
   { id: "department", label: "Department location", visible: true },
   { id: "parking", label: "Parking ID", visible: true },
-  { id: "date", label: "Date", visible: true },
-  { id: "amount", label: "Amount", visible: true },
+  { id: "date", label: "Date", visible: true, sticky: true },
+  { id: "amount", label: "Amount", visible: true, sticky: true },
   { id: "orderId", label: "Order ID", visible: false },
   { id: "paymentId", label: "Payment ID", visible: false },
   { id: "clientId", label: "Client ID", visible: false },
@@ -194,27 +201,43 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
         </div>
       </div>
       
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {visibleColumns.map((column) => (
-                <TableHead key={column.id}>{column.label}</TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedTransactions.map((transaction) => (
-              <TableRow key={transaction.id}>
+      <div className="rounded-md border relative">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
                 {visibleColumns.map((column) => (
-                  <TableCell key={`${transaction.id}-${column.id}`}>
-                    {transaction[column.id as keyof typeof transaction]}
-                  </TableCell>
+                  <TableHead
+                    key={column.id}
+                    className={cn(
+                      column.sticky && "sticky left-0 bg-background z-20 shadow-[1px_0_0_0_hsl(var(--border))]",
+                      "whitespace-nowrap"
+                    )}
+                  >
+                    {column.label}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {paginatedTransactions.map((transaction) => (
+                <TableRow key={transaction.id}>
+                  {visibleColumns.map((column) => (
+                    <TableCell
+                      key={`${transaction.id}-${column.id}`}
+                      className={cn(
+                        column.sticky && "sticky left-0 bg-background z-20 shadow-[1px_0_0_0_hsl(var(--border))]",
+                        "whitespace-nowrap"
+                      )}
+                    >
+                      {transaction[column.id as keyof typeof transaction]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       
       <div className="flex items-center justify-between mt-4">
