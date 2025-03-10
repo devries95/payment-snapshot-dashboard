@@ -15,6 +15,7 @@ export type ColumnConfig = {
   id: string;
   label: string;
   visible: boolean;
+  sticky?: boolean;
 };
 
 type ColumnSettingsDrawerProps = {

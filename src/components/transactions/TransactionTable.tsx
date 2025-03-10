@@ -1,13 +1,15 @@
+
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Download, Filter, Settings, ChevronDown } from "lucide-react";
-import { ColumnConfig, ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
+import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
 import { ScheduleDeliveryDialog } from "./ScheduleDeliveryDialog";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
