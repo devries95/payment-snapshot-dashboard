@@ -1,15 +1,20 @@
-
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Download, Filter, Settings } from "lucide-react";
+import { Download, Filter, Settings, ChevronDown } from "lucide-react";
 import { ColumnConfig, ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
+import { ScheduleDeliveryDialog } from "./ScheduleDeliveryDialog";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-// Define all available columns
 const allColumns: ColumnConfig[] = [
   { id: "supplier", label: "Supplier name", visible: true },
   { id: "zone", label: "Zone description", visible: true },
@@ -35,7 +40,6 @@ const allColumns: ColumnConfig[] = [
   { id: "paymentMethod", label: "Payment method", visible: false },
 ];
 
-// Extended mock transaction data with all possible fields
 const mockTransactions = Array(50).fill(null).map((_, i) => ({
   id: i + 1,
   supplier: "Philadelphia",
@@ -75,11 +79,10 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [scheduleDeliveryDialogOpen, setScheduleDeliveryDialogOpen] = useState(false);
   
-  // Get only visible columns
   const visibleColumns = columns.filter(col => col.visible);
   
-  // Filter transactions based on search term
   const filteredTransactions = mockTransactions.filter(transaction => 
     Object.entries(transaction)
       .filter(([key]) => visibleColumns.some(col => col.id === key))
@@ -106,7 +109,6 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
       description: "Your download will start shortly."
     });
     
-    // In a real application, this would trigger an actual download
     console.log(`Exporting ${count} transactions in ${format} format`);
   };
   
@@ -172,13 +174,23 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
           >
             <Settings className="h-4 w-4" />
           </Button>
-          <Button 
-            className="bg-primary text-white"
-            onClick={() => setExportDialogOpen(true)}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-primary text-white">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-background border">
+              <DropdownMenuItem onClick={() => setExportDialogOpen(true)}>
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setScheduleDeliveryDialogOpen(true)}>
+                Schedule delivery
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
@@ -271,6 +283,12 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
         open={exportDialogOpen}
         onOpenChange={setExportDialogOpen}
         onExport={handleExport}
+        totalCount={filteredTransactions.length}
+      />
+      
+      <ScheduleDeliveryDialog
+        open={scheduleDeliveryDialogOpen}
+        onOpenChange={setScheduleDeliveryDialogOpen}
         totalCount={filteredTransactions.length}
       />
     </div>

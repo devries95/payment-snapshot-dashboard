@@ -1,3 +1,4 @@
+
 import { useNavigate, useParams } from "react-router-dom";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ const transactionTitles: Record<string, string> = {
   "todays-transactions": "Today's Transactions",
   "last-month-transactions": "Last Month's Transactions",
   "this-month-transactions": "This Month's Transactions",
+  "yesterday-revenue": "Yesterday's Revenue",
   "transactions": "All Transactions"
 };
 
