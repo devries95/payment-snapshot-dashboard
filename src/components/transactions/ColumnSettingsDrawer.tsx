@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GripVertical, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type ColumnConfig = {
   id: string;
@@ -48,7 +49,7 @@ export function ColumnSettingsDrawer({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="fixed inset-y-0 right-0 h-full w-[350px] sm:w-[500px] border-l rounded-none flex flex-col bg-white">
+      <DrawerContent className="fixed inset-y-0 right-0 h-[100vh] w-[350px] sm:w-[500px] border-l rounded-none flex flex-col bg-white">
         <DrawerHeader className="flex items-center justify-between p-4 border-b">
           <DrawerTitle className="text-xl font-semibold">Column settings</DrawerTitle>
           <DrawerClose asChild>

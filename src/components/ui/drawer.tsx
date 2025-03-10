@@ -43,6 +43,10 @@ const DrawerContent = React.forwardRef<
       ref={ref}
       className={cn(
         "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
+        // Add support for right drawer with 100vh height
+        className?.includes("right-0") 
+          ? "right-0 left-auto h-screen rounded-none rounded-l-[10px]" 
+          : "bottom-0 inset-x-0 rounded-t-[10px]",
         className
       )}
       {...props}
