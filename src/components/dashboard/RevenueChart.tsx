@@ -19,19 +19,22 @@ const PAYMENT_METHOD_DATA = {
   yesterday: [
     { name: 'Credit Card', value: 240 },
     { name: 'Wallet', value: 95 },
-    { name: 'PayPal', value: 60 },
+    { name: 'ApplePay', value: 60 },
+    { name: 'GooglePay', value: 35 },
     { name: 'N/A', value: 20 },
   ],
   thisMonth: [
     { name: 'Credit Card', value: 14200 },
     { name: 'Wallet', value: 5300 },
-    { name: 'PayPal', value: 4800 },
+    { name: 'ApplePay', value: 4800 },
+    { name: 'GooglePay', value: 4900 },
     { name: 'N/A', value: 682 },
   ],
   lastMonth: [
     { name: 'Credit Card', value: 30000 },
     { name: 'Wallet', value: 12281 },
-    { name: 'PayPal', value: 8500 },
+    { name: 'ApplePay', value: 8500 },
+    { name: 'GooglePay', value: 4500 },
     { name: 'N/A', value: 2500 },
   ],
 };
