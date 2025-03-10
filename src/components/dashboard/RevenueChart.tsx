@@ -44,7 +44,7 @@ const PAYMENT_METHOD_COLORS = {
   'Credit Card': '#9b87f5',
   'Wallet': '#0EA5E9',
   'ApplePay': '#F97316',
-  'GooglePay': '#588157',
+  'GooglePay': '#0fa3b1',
   'N/A': '#D9D9D9',
 };
 
