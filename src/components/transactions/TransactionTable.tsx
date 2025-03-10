@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Download, Filter, Settings } from "lucide-react";
 import { ColumnConfig, ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
+import { ExportDialog } from "./ExportDialog";
+import { toast } from "sonner";
 
 // Define all available columns
 const allColumns: ColumnConfig[] = [
@@ -72,6 +74,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const [activeFilter, setActiveFilter] = useState("1D");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
   
   // Get only visible columns
   const visibleColumns = columns.filter(col => col.visible);
@@ -94,6 +97,17 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   
   const handleColumnChange = (updatedColumns: ColumnConfig[]) => {
     setColumns(updatedColumns);
+  };
+
+  const handleExport = (format: "excel" | "csv" | "json" | "pdf", dataAmount: "all" | "limited") => {
+    const count = dataAmount === "all" ? filteredTransactions.length : Math.min(5000, filteredTransactions.length);
+    
+    toast.success(`Exporting ${count} transactions as ${format.toUpperCase()}`, {
+      description: "Your download will start shortly."
+    });
+    
+    // In a real application, this would trigger an actual download
+    console.log(`Exporting ${count} transactions in ${format} format`);
   };
   
   return (
@@ -158,7 +172,10 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
           >
             <Settings className="h-4 w-4" />
           </Button>
-          <Button className="bg-primary text-white">
+          <Button 
+            className="bg-primary text-white"
+            onClick={() => setExportDialogOpen(true)}
+          >
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
@@ -248,6 +265,13 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
         onOpenChange={setDrawerOpen}
         columns={columns}
         onApplyChanges={handleColumnChange}
+      />
+      
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        onExport={handleExport}
+        totalCount={filteredTransactions.length}
       />
     </div>
   );
