@@ -19,7 +19,7 @@ export default function TransactionDetails() {
   const navigate = useNavigate();
   
   // Get the title based on the id parameter, or default to "Transactions"
-  const title = transactionTitles[id] || "Transactions";
+  const title = transactionTitles[id] || "Cleared transactions";
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
