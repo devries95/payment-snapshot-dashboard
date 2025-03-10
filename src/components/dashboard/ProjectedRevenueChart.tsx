@@ -88,7 +88,7 @@ export function ProjectedRevenueChart() {
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
-          <CardTitle className="text-lg">Projected Annual Revenue</CardTitle>
+          <CardTitle className="text-lg">Projected annual revenue</CardTitle>
           <CardDescription className="flex items-center gap-1">
             Based on historical payment data
             <TooltipProvider>

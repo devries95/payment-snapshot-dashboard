@@ -31,7 +31,7 @@ export function PaymentTrendsChart() {
   return (
     <Card className="animate-fade-in-up col-span-1">
       <ChartHeader 
-        title="Cleared Transactions" 
+        title="Cleared transactions" 
         period={period} 
         onPeriodChange={handlePeriodChange} 
       />

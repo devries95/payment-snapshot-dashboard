@@ -127,7 +127,7 @@ export default function Dashboard() {
       {/* Payment Trends & Zone Analysis - Side by Side */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Payment Trends & Zone Analysis</h2>
+          <h2 className="text-lg font-medium">Payment & area analysis</h2>
           <p className="text-sm text-muted-foreground">Monthly payment trends and zone revenue distribution</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -139,7 +139,7 @@ export default function Dashboard() {
       {/* Payment Methods & Transaction Types Section */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Payment Methods Distribution</h2>
+          <h2 className="text-lg font-medium">Payment methods distribution</h2>
           <p className="text-sm text-muted-foreground">Payment methods and credit card usage</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -151,7 +151,7 @@ export default function Dashboard() {
       {/* New Section: Projected Annual Revenue - MOVED HERE */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Revenue Forecast</h2>
+          <h2 className="text-lg font-medium">Revenue forecast</h2>
           <p className="text-sm text-muted-foreground">Projected annual revenue based on historical data</p>
         </div>
         <ProjectedRevenueChart />
@@ -160,7 +160,7 @@ export default function Dashboard() {
       {/* Reports Section */}
       <div className="mb-6">
         <div className="mb-2">
-          <h2 className="text-lg font-medium">Recent Reports</h2>
+          <h2 className="text-lg font-medium">Recent reports</h2>
           <p className="text-sm text-muted-foreground">Monthly financial summaries and payment analysis</p>
         </div>
         <div className="grid grid-cols-1">

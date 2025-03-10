@@ -92,7 +92,7 @@ export function ZonesRevenueCard() {
     <Card className="animate-fade-in-up h-full flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div>
-          <CardTitle className="text-lg">Revenue by Zone</CardTitle>
+          <CardTitle className="text-lg">Revenue by area</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
