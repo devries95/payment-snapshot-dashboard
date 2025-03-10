@@ -31,14 +31,6 @@ export function ExportDialog({ open, onOpenChange, onExport, totalCount }: Expor
       <DialogContent className="sm:max-w-[425px]">
         <div className="flex items-center justify-between">
           <DialogTitle className="text-3xl font-normal">Download</DialogTitle>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 rounded-full"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-5 w-5" />
-          </Button>
         </div>
         
         <DialogDescription className="text-base text-muted-foreground py-2">
