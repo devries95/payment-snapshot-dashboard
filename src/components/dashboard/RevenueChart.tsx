@@ -43,7 +43,8 @@ const PAYMENT_METHOD_DATA = {
 const PAYMENT_METHOD_COLORS = {
   'Credit Card': '#9b87f5',
   'Wallet': '#0EA5E9',
-  'PayPal': '#F97316',
+  'ApplePay': '#F97316',
+  'GooglePay': '#588157',
   'N/A': '#D9D9D9',
 };
 
