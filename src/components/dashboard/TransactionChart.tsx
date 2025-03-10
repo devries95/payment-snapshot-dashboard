@@ -21,6 +21,7 @@ const DATA = {
     { name: 'Visa', value: 1450 },
     { name: 'Mastercard', value: 1670 },
     { name: 'Discovery', value: 820 },
+    { name: 'Amex', value: 500 },
     { name: 'N/A', value: 216 },
   ],
   thisMonth: [
@@ -66,7 +67,7 @@ export function TransactionChart() {
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Credit Card Revenue</CardTitle>
+          <CardTitle className="text-lg">Credit Card Tyope Revenue</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
