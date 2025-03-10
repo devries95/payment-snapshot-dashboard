@@ -69,7 +69,7 @@ export function TransactionChart() {
     <Card className="animate-fade-in-up">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle className="text-lg">Credit Card Type Revenue</CardTitle>
+          <CardTitle className="text-lg">Credit card type revenue</CardTitle>
         </div>
         
         <div className="flex items-center gap-4">
