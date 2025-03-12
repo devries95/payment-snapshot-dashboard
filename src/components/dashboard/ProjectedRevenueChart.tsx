@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
@@ -18,26 +17,27 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Generate revenue data for the whole year
+// Generate revenue data for the whole year with worse projections
 const generateRevenueData = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const data = [];
   
   // Monthly revenue values (first ~5 months are actual data, rest are projections)
+  // We'll make the projections worse by reducing the values
   const monthlyRevenue = [
     32000, // January
     42000, // February
     56000, // March
     61000, // April
     52000, // May (current month in this example)
-    67000, // June (projected)
-    59000, // July (projected)
-    48000, // August (projected)
-    54000, // September (projected)
-    65000, // October (projected)
-    72000, // November (projected)
-    82000  // December (projected)
+    49000, // June (projected - worse)
+    43000, // July (projected - worse)
+    38000, // August (projected - worse)
+    40000, // September (projected - worse)
+    42000, // October (projected - worse)
+    45000, // November (projected - worse)
+    48000  // December (projected - worse)
   ];
   
   // Create data points for each month
