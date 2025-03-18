@@ -1,9 +1,8 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { RadioGroup } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -18,13 +17,41 @@ interface ExportDialogProps {
 }
 
 export function ExportDialog({ open, onOpenChange, onExport, totalCount }: ExportDialogProps) {
-  const [format, setFormat] = useState<ExportFormat>("excel");
+  const [selectedFormats, setSelectedFormats] = useState<ExportFormat[]>(["excel"]);
   const [dataAmount, setDataAmount] = useState<ExportDataAmount>("all");
 
+  const formats: { id: ExportFormat; label: string }[] = [
+    { id: "excel", label: "Excel" },
+    { id: "csv", label: "CSV" },
+    { id: "json", label: "JSON" },
+    { id: "pdf", label: "PDF" },
+  ];
+
+  const handleFormatToggle = (format: ExportFormat) => {
+    setSelectedFormats((prev) =>
+      prev.includes(format)
+        ? prev.filter((f) => f !== format)
+        : [...prev, format]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedFormats.length === formats.length) {
+      setSelectedFormats([]);
+    } else {
+      setSelectedFormats(formats.map(f => f.id));
+    }
+  };
+
   const handleExport = () => {
-    onExport(format, dataAmount);
+    if (selectedFormats.length === 0) return;
+    selectedFormats.forEach(format => {
+      onExport(format, dataAmount);
+    });
     onOpenChange(false);
   };
+
+  const isAllSelected = selectedFormats.length === formats.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,46 +68,31 @@ export function ExportDialog({ open, onOpenChange, onExport, totalCount }: Expor
           </Button>
         </div>
         
-        <DialogDescription className="text-base text-muted-foreground py-2">
-          Export your transaction data in various formats for analysis or record-keeping.
-        </DialogDescription>
-        
         <div className="grid gap-6 py-4">
           <div className="space-y-4">
-            <h3 className="text-xl font-medium">Format</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-medium">Format</h3>
+              <Button
+                variant="ghost"
+                onClick={handleSelectAll}
+                className="h-8 text-sm hover:bg-accent"
+              >
+                {isAllSelected ? "Deselect all" : "Select all"}
+              </Button>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="format-excel" 
-                  checked={format === "excel"} 
-                  onCheckedChange={() => setFormat("excel")}
-                />
-                <Label htmlFor="format-excel" className="text-base font-normal">Excel</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="format-csv" 
-                  checked={format === "csv"} 
-                  onCheckedChange={() => setFormat("csv")}
-                />
-                <Label htmlFor="format-csv" className="text-base font-normal">CSV</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="format-json" 
-                  checked={format === "json"} 
-                  onCheckedChange={() => setFormat("json")}
-                />
-                <Label htmlFor="format-json" className="text-base font-normal">JSON</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="format-pdf" 
-                  checked={format === "pdf"} 
-                  onCheckedChange={() => setFormat("pdf")}
-                />
-                <Label htmlFor="format-pdf" className="text-base font-normal">PDF</Label>
-              </div>
+              {formats.map((format) => (
+                <div key={format.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`format-${format.id}`} 
+                    checked={selectedFormats.includes(format.id)}
+                    onCheckedChange={() => handleFormatToggle(format.id)}
+                  />
+                  <Label htmlFor={`format-${format.id}`} className="text-base font-normal">
+                    {format.label}
+                  </Label>
+                </div>
+              ))}
             </div>
           </div>
           
@@ -117,6 +129,7 @@ export function ExportDialog({ open, onOpenChange, onExport, totalCount }: Expor
           </Button>
           <Button 
             onClick={handleExport} 
+            disabled={selectedFormats.length === 0}
             className="w-32 h-12 bg-purple-600 hover:bg-purple-700 text-base"
           >
             Download
