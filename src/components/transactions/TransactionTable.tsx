@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Filter, Settings, Download, CalendarIcon, X } from "lucide-react";
+import { Filter, Settings, Download, CalendarIcon, X, ChevronDown } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { DateRange } from "react-day-picker";
 
 export type ColumnConfig = {
   id: string;
@@ -114,10 +115,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   
   // Date range picker state
-  const [dateRange, setDateRange] = useState<{
-    from: Date | undefined;
-    to: Date | undefined;
-  }>({
+  const [dateRange, setDateRange] = useState<DateRange>({
     from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
     to: new Date()
   });
@@ -243,7 +241,9 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
                 <Calendar
                   mode="range"
                   selected={dateRange}
-                  onSelect={setDateRange}
+                  onSelect={(range) => {
+                    if (range) setDateRange(range);
+                  }}
                   initialFocus
                   className="p-3 pointer-events-auto"
                 />
