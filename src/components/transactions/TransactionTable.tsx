@@ -1,12 +1,23 @@
+
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Filter, Settings, Download } from "lucide-react";
+import { Filter, Settings, Download, CalendarIcon, X } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 export type ColumnConfig = {
   id: string;
@@ -17,7 +28,6 @@ export type ColumnConfig = {
 
 // Sample operators
 const operators = [
-  { value: "all", label: "All operators" },
   { value: "stockholm", label: "Stockholm Parking" },
   { value: "gothenburg", label: "Gothenburg City Parking" },
   { value: "malmo", label: "Malmö Parking Authority" },
@@ -52,31 +62,42 @@ const allColumns: ColumnConfig[] = [
   { id: "paymentMethod", label: "Payment method", visible: false },
 ];
 
-const mockTransactions = Array(50).fill(null).map((_, i) => ({
-  id: i + 1,
-  supplier: "Philadelphia",
-  zone: "Philadelphia, PA",
-  zoneCode: "972524",
-  station: "Outlying 5 NPH",
-  department: "44U",
-  parking: `790,658,${Math.floor(Math.random() * 999)}`,
-  date: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  amount: `€${(Math.random() * 1000).toFixed(2)}`,
-  orderId: `ORD-${Math.floor(1000000 + Math.random() * 9000000)}`,
-  paymentId: `PAY-${Math.floor(1000000 + Math.random() * 9000000)}`,
-  clientId: `CLT-${Math.floor(10000 + Math.random() * 90000)}`,
-  customerPhone: `+1 ${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`,
-  email: `customer${i}@example.com`,
-  timeZone: "EST",
-  localTimeStart: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
-  localTimeStop: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
-  duration: `${Math.floor(Math.random() * 180)} mins`,
-  paidMinutes: `${Math.floor(Math.random() * 180)} mins`,
-  insertTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-  paymentTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-  approved: Math.random() > 0.2 ? "Yes" : "No",
-  paymentMethod: ["Credit Card", "PayPal", "Apple Pay", "Google Pay"][Math.floor(Math.random() * 4)],
-}));
+// Generate mock transactions with operator information
+const generateMockTransactions = () => {
+  return Array(50).fill(null).map((_, i) => {
+    // Randomly select an operator
+    const randomOperator = operators[Math.floor(Math.random() * operators.length)];
+    
+    return {
+      id: i + 1,
+      supplier: randomOperator.label,
+      supplierValue: randomOperator.value,
+      zone: `${randomOperator.label.split(' ')[0]} Zone ${Math.floor(Math.random() * 10) + 1}`,
+      zoneCode: `${Math.floor(Math.random() * 999999)}`,
+      station: `${randomOperator.label.split(' ')[0]} Station ${Math.floor(Math.random() * 15) + 1}`,
+      department: `Dept ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${Math.floor(Math.random() * 100)}`,
+      parking: `${Math.floor(Math.random() * 999)},${Math.floor(Math.random() * 999)},${Math.floor(Math.random() * 999)}`,
+      date: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      amount: `€${(Math.random() * 1000).toFixed(2)}`,
+      orderId: `ORD-${Math.floor(1000000 + Math.random() * 9000000)}`,
+      paymentId: `PAY-${Math.floor(1000000 + Math.random() * 9000000)}`,
+      clientId: `CLT-${Math.floor(10000 + Math.random() * 90000)}`,
+      customerPhone: `+1 ${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`,
+      email: `customer${i}@example.com`,
+      timeZone: "EST",
+      localTimeStart: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
+      localTimeStop: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
+      duration: `${Math.floor(Math.random() * 180)} mins`,
+      paidMinutes: `${Math.floor(Math.random() * 180)} mins`,
+      insertTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+      paymentTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+      approved: Math.random() > 0.2 ? "Yes" : "No",
+      paymentMethod: ["Credit Card", "PayPal", "Apple Pay", "Google Pay"][Math.floor(Math.random() * 4)],
+    };
+  });
+};
+
+const mockTransactions = generateMockTransactions();
 
 type TransactionTableProps = {
   title: string;
@@ -84,18 +105,27 @@ type TransactionTableProps = {
 };
 
 export function TransactionTable({ title, description }: TransactionTableProps) {
-  const [selectedOperator, setSelectedOperator] = useState("all");
+  // Use state for selected operators with multi-select
+  const [selectedOperators, setSelectedOperators] = useState<string[]>([]);
   const [pageSize, setPageSize] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeFilter, setActiveFilter] = useState("1D");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   
+  // Date range picker state
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({
+    from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+    to: new Date()
+  });
+  
   const visibleColumns = columns.filter(col => col.visible);
   
   const filteredTransactions = mockTransactions.filter(transaction => 
-    selectedOperator === "all" || transaction.supplier.includes(operators.find(op => op.value === selectedOperator)?.label || "")
+    selectedOperators.length === 0 || selectedOperators.includes(transaction.supplierValue)
   );
   
   const paginatedTransactions = filteredTransactions.slice(
@@ -116,55 +146,111 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
     
     console.log(`Exporting transactions in CSV format`);
   };
+
+  const toggleOperator = (value: string) => {
+    setSelectedOperators(current => 
+      current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value]
+    );
+  };
+  
+  const clearOperators = () => {
+    setSelectedOperators([]);
+  };
   
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row gap-3 mb-4 justify-between">
         <div className="flex-1 max-w-md">
-          <Select value={selectedOperator} onValueChange={setSelectedOperator}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All operators" />
-            </SelectTrigger>
-            <SelectContent>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full justify-between">
+                {selectedOperators.length === 0 
+                  ? "All operators" 
+                  : `${selectedOperators.length} selected`}
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="start">
               {operators.map((operator) => (
-                <SelectItem key={operator.value} value={operator.value}>
+                <DropdownMenuCheckboxItem
+                  key={operator.value}
+                  checked={selectedOperators.includes(operator.value)}
+                  onCheckedChange={() => toggleOperator(operator.value)}
+                >
                   {operator.label}
-                </SelectItem>
+                </DropdownMenuCheckboxItem>
               ))}
-            </SelectContent>
-          </Select>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          {selectedOperators.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {selectedOperators.map(operatorValue => {
+                const operator = operators.find(op => op.value === operatorValue);
+                return (
+                  <Badge 
+                    key={operatorValue} 
+                    variant="secondary" 
+                    className="flex items-center gap-1"
+                  >
+                    {operator?.label}
+                    <X 
+                      className="h-3 w-3 cursor-pointer" 
+                      onClick={() => toggleOperator(operatorValue)}
+                    />
+                  </Badge>
+                );
+              })}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 px-2 text-xs" 
+                onClick={clearOperators}
+              >
+                Clear all
+              </Button>
+            </div>
+          )}
         </div>
+        
         <div className="flex flex-wrap gap-2 justify-end">
-          <div className="flex rounded-md border">
-            <Button 
-              variant={activeFilter === "Custom" ? "secondary" : "ghost"} 
-              onClick={() => setActiveFilter("Custom")}
-              className="rounded-l-md rounded-r-none h-10"
-            >
-              Custom
-            </Button>
-            <Button 
-              variant={activeFilter === "1D" ? "secondary" : "ghost"} 
-              onClick={() => setActiveFilter("1D")}
-              className="rounded-none h-10"
-            >
-              1D
-            </Button>
-            <Button 
-              variant={activeFilter === "7D" ? "secondary" : "ghost"} 
-              onClick={() => setActiveFilter("7D")}
-              className="rounded-none h-10"
-            >
-              7D
-            </Button>
-            <Button 
-              variant={activeFilter === "1M" ? "secondary" : "ghost"} 
-              onClick={() => setActiveFilter("1M")}
-              className="rounded-r-md rounded-l-none h-10"
-            >
-              1M
-            </Button>
+          {/* Date Range Picker */}
+          <div className="flex-shrink-0">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className="w-[280px] justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Select date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
+          
           <Button variant="outline" size="icon" className="h-10 w-10">
             <Filter className="h-4 w-4" />
           </Button>
