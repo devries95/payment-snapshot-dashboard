@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Filter, Settings, Download, ChevronDown } from "lucide-react";
+import { Filter, Settings, Download } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export type ColumnConfig = {
   id: string;
@@ -126,7 +119,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row gap-3 mb-4 justify-between">
         <div className="flex-1 max-w-md">
           <Select value={selectedOperator} onValueChange={setSelectedOperator}>
             <SelectTrigger className="w-full">
@@ -141,7 +134,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 justify-end">
           <div className="flex rounded-md border">
             <Button 
               variant={activeFilter === "Custom" ? "secondary" : "ghost"} 

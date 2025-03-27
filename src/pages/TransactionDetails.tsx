@@ -1,27 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 
-// A mapping of transaction types to titles
-const transactionTitles: Record<string, string> = {
-  "todays-revenue": "Today's Revenue",
-  "last-month-revenue": "Last Month's Revenue",
-  "this-month-revenue": "This Month's Revenue",
-  "todays-transactions": "Today's Transactions",
-  "last-month-transactions": "Last Month's Transactions",
-  "this-month-transactions": "This Month's Transactions",
-  "yesterday-revenue": "Yesterday's Revenue",
-  "transactions": "All Transactions"
-};
-
 export default function TransactionDetails() {
-  const { id = "transactions" } = useParams();
   const navigate = useNavigate();
-  
-  // Get the title based on the id parameter, or default to "Transactions"
-  const title = transactionTitles[id] || "Cleared transactions";
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -44,25 +28,29 @@ export default function TransactionDetails() {
       <main className="flex-1">
         <div className="max-w-[1400px] mx-auto p-4 sm:p-6">
           <div className="mb-4">
-            <h1 className="text-3xl font-bold">{title}</h1>
+            <h1 className="text-3xl font-bold">Transactions</h1>
             <p className="text-sm text-muted-foreground">726,173 transactions</p>
           </div>
           
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="p-4 border rounded-lg bg-card">
-              <div className="text-sm text-muted-foreground">Total payment amount - All accounts</div>
-              <div className="text-2xl font-bold mt-1">€4,156</div>
-              <div className="text-xs text-muted-foreground mt-1">Jan 11, 2025</div>
-            </div>
-            <div className="p-4 border rounded-lg bg-card">
-              <div className="text-sm text-muted-foreground">Total transactions - All accounts</div>
-              <div className="text-2xl font-bold mt-1">1,324</div>
-              <div className="text-xs text-muted-foreground mt-1">Jan 11, 2025</div>
-            </div>
+            <StatCard 
+              title="Today's Transactions" 
+              value="1,245" 
+              dateInfo="24 May, 2023" 
+              type="transaction" 
+              id="transactions"
+            />
+            <StatCard 
+              title="Today's Revenue" 
+              value="€32,621.50" 
+              dateInfo="24 May, 2023" 
+              type="revenue" 
+              id="revenue"
+            />
           </div>
           
-          <TransactionTable title={title} description="Detailed view of transactions" />
+          <TransactionTable title="Transactions" description="Detailed view of transactions" />
         </div>
       </main>
     </div>
