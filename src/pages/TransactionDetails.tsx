@@ -29,7 +29,6 @@ export default function TransactionDetails() {
         <div className="max-w-[1400px] mx-auto p-4 sm:p-6">
           <div className="mb-4">
             <h1 className="text-3xl font-bold">Transactions</h1>
-            <p className="text-sm text-muted-foreground">726,173 transactions</p>
           </div>
           
           {/* KPI Cards */}
