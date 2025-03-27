@@ -1,8 +1,8 @@
-
 import { useNavigate, useParams } from "react-router-dom";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { StatCard } from "@/components/dashboard/StatCard";
 
 // A mapping of transaction types to titles
 const transactionTitles: Record<string, string> = {
@@ -43,6 +43,25 @@ export default function TransactionDetails() {
       {/* Main Content */}
       <main className="flex-1">
         <div className="max-w-[1400px] mx-auto p-4 sm:p-6">
+          <div className="mb-4">
+            <h1 className="text-3xl font-bold">{title}</h1>
+            <p className="text-sm text-muted-foreground">726,173 transactions</p>
+          </div>
+          
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 border rounded-lg bg-card">
+              <div className="text-sm text-muted-foreground">Total payment amount - All accounts</div>
+              <div className="text-2xl font-bold mt-1">€4,156</div>
+              <div className="text-xs text-muted-foreground mt-1">Jan 11, 2025</div>
+            </div>
+            <div className="p-4 border rounded-lg bg-card">
+              <div className="text-sm text-muted-foreground">Total transactions - All accounts</div>
+              <div className="text-2xl font-bold mt-1">1,324</div>
+              <div className="text-xs text-muted-foreground mt-1">Jan 11, 2025</div>
+            </div>
+          </div>
+          
           <TransactionTable title={title} description="Detailed view of transactions" />
         </div>
       </main>

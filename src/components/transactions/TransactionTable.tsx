@@ -1,13 +1,11 @@
-
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Download, Filter, Settings, ChevronDown } from "lucide-react";
+import { Filter, Settings, Download, ChevronDown } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
-import { ScheduleDeliveryDialog } from "./ScheduleDeliveryDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -23,6 +21,18 @@ export type ColumnConfig = {
   visible: boolean;
   sticky?: boolean; // Indicates if the column should be fixed
 };
+
+// Sample operators
+const operators = [
+  { value: "all", label: "All operators" },
+  { value: "stockholm", label: "Stockholm Parking" },
+  { value: "gothenburg", label: "Gothenburg City Parking" },
+  { value: "malmo", label: "Malmö Parking Authority" },
+  { value: "uppsala", label: "Uppsala Municipal Parking" },
+  { value: "linkoping", label: "Linköping Parking Services" },
+  { value: "orebro", label: "Örebro Parking Management" },
+  { value: "vasteras", label: "Västerås City Parking" },
+];
 
 const allColumns: ColumnConfig[] = [
   { id: "supplier", label: "Supplier name", visible: true, sticky: true },
@@ -81,23 +91,18 @@ type TransactionTableProps = {
 };
 
 export function TransactionTable({ title, description }: TransactionTableProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedOperator, setSelectedOperator] = useState("all");
   const [pageSize, setPageSize] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilter, setActiveFilter] = useState("1D");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
-  const [scheduleDeliveryDialogOpen, setScheduleDeliveryDialogOpen] = useState(false);
   
   const visibleColumns = columns.filter(col => col.visible);
   
   const filteredTransactions = mockTransactions.filter(transaction => 
-    Object.entries(transaction)
-      .filter(([key]) => visibleColumns.some(col => col.id === key))
-      .some(([_, value]) => 
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    selectedOperator === "all" || transaction.supplier.includes(operators.find(op => op.value === selectedOperator)?.label || "")
   );
   
   const paginatedTransactions = filteredTransactions.slice(
@@ -111,35 +116,30 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
     setColumns(updatedColumns);
   };
 
-  const handleExport = (format: "excel" | "csv" | "json" | "pdf", dataAmount: "all" | "limited") => {
-    const count = dataAmount === "all" ? filteredTransactions.length : Math.min(5000, filteredTransactions.length);
-    
-    toast.success(`Exporting ${count} transactions as ${format.toUpperCase()}`, {
+  const handleExportCSV = () => {
+    toast.success("Exporting transactions as CSV", {
       description: "Your download will start shortly."
     });
     
-    console.log(`Exporting ${count} transactions in ${format} format`);
+    console.log(`Exporting transactions in CSV format`);
   };
   
   return (
     <div className="w-full">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">{title}</h1>
-        {description && (
-          <p className="text-sm text-muted-foreground mt-1">
-            {filteredTransactions.length} transactions
-          </p>
-        )}
-      </div>
-      
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <div className="flex-1">
-          <Input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-          />
+        <div className="flex-1 max-w-md">
+          <Select value={selectedOperator} onValueChange={setSelectedOperator}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All operators" />
+            </SelectTrigger>
+            <SelectContent>
+              {operators.map((operator) => (
+                <SelectItem key={operator.value} value={operator.value}>
+                  {operator.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex flex-wrap gap-2">
           <div className="flex rounded-md border">
@@ -183,23 +183,14 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
           >
             <Settings className="h-4 w-4" />
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="bg-primary text-white">
-                <Download className="mr-2 h-4 w-4" />
-                Export
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-background border">
-              <DropdownMenuItem onClick={() => setExportDialogOpen(true)}>
-                Download
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setScheduleDeliveryDialogOpen(true)}>
-                Schedule delivery
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            variant="secondary"
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+            onClick={handleExportCSV}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download CSV
+          </Button>
         </div>
       </div>
       
@@ -307,13 +298,11 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
       <ExportDialog
         open={exportDialogOpen}
         onOpenChange={setExportDialogOpen}
-        onExport={handleExport}
-        totalCount={filteredTransactions.length}
-      />
-      
-      <ScheduleDeliveryDialog
-        open={scheduleDeliveryDialogOpen}
-        onOpenChange={setScheduleDeliveryDialogOpen}
+        onExport={(format, dataAmount) => {
+          toast.success(`Exporting ${dataAmount === "all" ? "all" : "limited"} transactions as ${format.toUpperCase()}`, {
+            description: "Your download will start shortly."
+          });
+        }}
         totalCount={filteredTransactions.length}
       />
     </div>
