@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Filter, Settings, Download, CalendarIcon, X, ChevronDown } from "lucide-react";
+import { Filter, Settings, Download, CalendarIcon, ChevronDown } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
 import { toast } from "sonner";
@@ -19,15 +18,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { DateRange } from "react-day-picker";
+import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export type ColumnConfig = {
   id: string;
   label: string;
   visible: boolean;
-  sticky?: boolean; // Indicates if the column should be fixed
+  sticky?: boolean;
 };
 
-// Sample operators
 const operators = [
   { value: "stockholm", label: "Stockholm Parking" },
   { value: "gothenburg", label: "Gothenburg City Parking" },
@@ -63,16 +63,16 @@ const allColumns: ColumnConfig[] = [
   { id: "paymentMethod", label: "Payment method", visible: false },
 ];
 
-// Generate mock transactions with operator information
 const generateMockTransactions = () => {
   return Array(50).fill(null).map((_, i) => {
-    // Randomly select an operator
     const randomOperator = operators[Math.floor(Math.random() * operators.length)];
+    const parkingType = Math.random() > 0.7 ? 'reservation' : 'normal';
     
     return {
       id: i + 1,
       supplier: randomOperator.label,
       supplierValue: randomOperator.value,
+      parkingType,
       zone: `${randomOperator.label.split(' ')[0]} Zone ${Math.floor(Math.random() * 10) + 1}`,
       zoneCode: `${Math.floor(Math.random() * 999999)}`,
       station: `${randomOperator.label.split(' ')[0]} Station ${Math.floor(Math.random() * 15) + 1}`,
@@ -85,15 +85,7 @@ const generateMockTransactions = () => {
       clientId: `CLT-${Math.floor(10000 + Math.random() * 90000)}`,
       customerPhone: `+1 ${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`,
       email: `customer${i}@example.com`,
-      timeZone: "EST",
-      localTimeStart: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
-      localTimeStop: `${Math.floor(Math.random() * 12) + 1}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
-      duration: `${Math.floor(Math.random() * 180)} mins`,
-      paidMinutes: `${Math.floor(Math.random() * 180)} mins`,
-      insertTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-      paymentTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-      approved: Math.random() > 0.2 ? "Yes" : "No",
-      paymentMethod: ["Credit Card", "PayPal", "Apple Pay", "Google Pay"][Math.floor(Math.random() * 4)],
+      timeZone: "EST"
     };
   });
 };
@@ -106,24 +98,23 @@ type TransactionTableProps = {
 };
 
 export function TransactionTable({ title, description }: TransactionTableProps) {
-  // Use state for selected operators with multi-select
   const [selectedOperators, setSelectedOperators] = useState<string[]>([]);
   const [pageSize, setPageSize] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
-  
-  // Date range picker state
+  const [parkingType, setParkingType] = useState<'normal' | 'reservation'>('normal');
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+    from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     to: new Date()
   });
   
   const visibleColumns = columns.filter(col => col.visible);
   
   const filteredTransactions = mockTransactions.filter(transaction => 
-    selectedOperators.length === 0 || selectedOperators.includes(transaction.supplierValue)
+    (selectedOperators.length === 0 || selectedOperators.includes(transaction.supplierValue)) &&
+    transaction.parkingType === parkingType
   );
   
   const paginatedTransactions = filteredTransactions.slice(
@@ -160,96 +151,104 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row gap-3 mb-4 justify-between">
-        <div className="flex-1 max-w-md">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {selectedOperators.length === 0 
-                  ? "All operators" 
-                  : `${selectedOperators.length} selected`}
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-              {operators.map((operator) => (
-                <DropdownMenuCheckboxItem
-                  key={operator.value}
-                  checked={selectedOperators.includes(operator.value)}
-                  onCheckedChange={() => toggleOperator(operator.value)}
-                >
-                  {operator.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          {selectedOperators.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {selectedOperators.map(operatorValue => {
-                const operator = operators.find(op => op.value === operatorValue);
-                return (
-                  <Badge 
-                    key={operatorValue} 
-                    variant="secondary" 
-                    className="flex items-center gap-1"
+        <div className="flex items-center gap-4">
+          <div className="flex-1 max-w-md">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  {selectedOperators.length === 0 
+                    ? "All operators" 
+                    : `${selectedOperators.length} selected`}
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                {operators.map((operator) => (
+                  <DropdownMenuCheckboxItem
+                    key={operator.value}
+                    checked={selectedOperators.includes(operator.value)}
+                    onCheckedChange={() => toggleOperator(operator.value)}
                   >
-                    {operator?.label}
-                    <X 
-                      className="h-3 w-3 cursor-pointer" 
-                      onClick={() => toggleOperator(operatorValue)}
-                    />
-                  </Badge>
-                );
-              })}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 px-2 text-xs" 
-                onClick={clearOperators}
-              >
-                Clear all
-              </Button>
-            </div>
-          )}
+                    {operator.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {selectedOperators.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {selectedOperators.map(operatorValue => {
+                  const operator = operators.find(op => op.value === operatorValue);
+                  return (
+                    <Badge 
+                      key={operatorValue} 
+                      variant="secondary" 
+                      className="flex items-center gap-1"
+                    >
+                      {operator?.label}
+                      <X 
+                        className="h-3 w-3 cursor-pointer" 
+                        onClick={() => toggleOperator(operatorValue)}
+                      />
+                    </Badge>
+                  );
+                })}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-6 px-2 text-xs" 
+                  onClick={clearOperators}
+                >
+                  Clear all
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          <ToggleGroup type="single" value={parkingType} onValueChange={(value) => value && setParkingType(value as 'normal' | 'reservation')}>
+            <ToggleGroupItem value="normal" aria-label="Normal parking">
+              Normal
+            </ToggleGroupItem>
+            <ToggleGroupItem value="reservation" aria-label="Reservation parking">
+              Reservation
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
         
         <div className="flex flex-wrap gap-2 justify-end">
-          {/* Date Range Picker */}
-          <div className="flex-shrink-0">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className="w-[280px] justify-start text-left font-normal"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, "LLL dd, y")} -{" "}
-                        {format(dateRange.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "LLL dd, y")
-                    )
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className="w-[280px] justify-start text-left font-normal"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateRange.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "LLL dd, y")} -{" "}
+                      {format(dateRange.to, "LLL dd, y")}
+                    </>
                   ) : (
-                    <span>Select date range</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={(range) => {
-                    if (range) setDateRange(range);
-                  }}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+                    format(dateRange.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>Select date range</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="range"
+                selected={dateRange}
+                onSelect={(range) => {
+                  if (range) setDateRange(range);
+                }}
+                initialFocus
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
           
           <Button variant="outline" size="icon" className="h-10 w-10">
             <Filter className="h-4 w-4" />
