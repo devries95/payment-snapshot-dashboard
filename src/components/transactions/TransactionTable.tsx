@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Filter, Settings, Download, CalendarIcon, ChevronDown } from "lucide-react";
+import { Filter, Settings, Download, CalendarIcon, ChevronDown, X } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
 import { toast } from "sonner";
@@ -38,7 +39,8 @@ const operators = [
   { value: "vasteras", label: "Västerås City Parking" },
 ];
 
-const allColumns: ColumnConfig[] = [
+// Normal parking columns
+const allNormalColumns: ColumnConfig[] = [
   { id: "supplier", label: "Supplier name", visible: true, sticky: true },
   { id: "zone", label: "Zone description", visible: true },
   { id: "zoneCode", label: "Zone code", visible: true },
@@ -63,6 +65,62 @@ const allColumns: ColumnConfig[] = [
   { id: "paymentMethod", label: "Payment method", visible: false },
 ];
 
+// Reservation parking columns
+const allReservationColumns: ColumnConfig[] = [
+  { id: "micrositeId", label: "Microsite ID", visible: true, sticky: true },
+  { id: "micrositeName", label: "Microsite Name", visible: true },
+  { id: "paymentTransactionTerminalId", label: "Payment Transaction Terminal Id", visible: true },
+  { id: "paymentTransactionMerchantId", label: "Payment Transaction Merchant Id", visible: true },
+  { id: "paymentTransactionId", label: "Payment Transaction Id", visible: true },
+  { id: "orderPromoCodeId", label: "Order Promo Code Id", visible: true },
+  { id: "orderPromoCodeName", label: "Order Promo Code Name", visible: true },
+  { id: "orderCompletedAt", label: "Order Completed At", visible: true },
+  { id: "orderWorkflowState", label: "Order Workflow State", visible: true },
+  { id: "reservationId", label: "Reservation Id", visible: true, sticky: true },
+  { id: "reservationBeginAt", label: "Reservation Begin At", visible: true },
+  { id: "reservationEndAt", label: "Reservation End At", visible: true },
+  { id: "paymentTransactionAction", label: "Payment Transaction Action", visible: true },
+  { id: "paymentTransactionSuccess", label: "Payment Transaction Success", visible: true },
+  { id: "paymentTransactionAmount", label: "Payment Transaction Amount", visible: true, sticky: true },
+  { id: "paymentTransactionCreatedAt", label: "Payment Transaction Created At", visible: true },
+  { id: "paymentTransactionInstrument", label: "Payment Transaction Instrument", visible: true },
+  { id: "orderId", label: "Order Id", visible: true },
+  { id: "paymentCode", label: "Payment Code", visible: true },
+  { id: "barcodeCode", label: "Barcode Code", visible: false },
+  { id: "facilityId", label: "Facility Id", visible: false },
+  { id: "facilityName", label: "Facility Name", visible: false },
+  { id: "facilityCode", label: "Facility Code", visible: false },
+  { id: "facilityTimeZone", label: "Facility Time Zone", visible: false },
+  { id: "companyID", label: "Company ID", visible: false },
+  { id: "companyName", label: "Company Name", visible: false },
+  { id: "eventID", label: "Event ID", visible: false },
+  { id: "eventName", label: "Event Name", visible: false },
+  { id: "venueID", label: "Venue ID", visible: false },
+  { id: "venueName", label: "Venue Name", visible: false },
+  { id: "lotID", label: "Lot ID", visible: false },
+  { id: "lotName", label: "Lot Name", visible: false },
+  { id: "productID", label: "Product ID", visible: false },
+  { id: "productName", label: "Product Name", visible: false },
+  { id: "productPriceCalculationType", label: "Product Price Calculation Type", visible: false },
+  { id: "productPricePeriodHours", label: "Product Price Period Hours", visible: false },
+  { id: "productTypeID", label: "Product Type ID", visible: false },
+  { id: "productTypeName", label: "Product Type Name", visible: false },
+  { id: "lineItemID", label: "Line Item ID", visible: false },
+  { id: "lineItemWorkflowState", label: "Line Item Workflow State", visible: false },
+  { id: "lineItemTotal", label: "Line Item Total", visible: false },
+  { id: "lineItemPrice", label: "Line Item Price", visible: false },
+  { id: "lineItemParkmobileServiceFee", label: "Line Item Parkmobile Service Fee", visible: false },
+  { id: "lineItemClientServiceFee", label: "Line Item Client Service Fee", visible: false },
+  { id: "lineItemDeliveryFee", label: "Line Item Delivery Fee", visible: false },
+  { id: "lineItemTax", label: "Line Item Tax", visible: false },
+  { id: "lineItemDiscount", label: "Line Item Discount", visible: false },
+  { id: "lineItemProcessingFee", label: "Line Item Processing Fee", visible: false },
+  { id: "lineItemTransactionFee", label: "Line Item Transaction Fee", visible: false },
+  { id: "amountOwedClient", label: "Amount Owed Client", visible: false },
+  { id: "amountOwedParkmobile", label: "Amount Owed Parkmobile", visible: false },
+];
+
+// Generate mock normal transactions data
 const generateMockTransactions = () => {
   return Array(50).fill(null).map((_, i) => {
     const randomOperator = operators[Math.floor(Math.random() * operators.length)];
@@ -90,7 +148,74 @@ const generateMockTransactions = () => {
   });
 };
 
-const mockTransactions = generateMockTransactions();
+// Generate mock reservation transactions data
+const generateMockReservationTransactions = () => {
+  return Array(50).fill(null).map((_, i) => {
+    const randomOperator = operators[Math.floor(Math.random() * operators.length)];
+    const beginDate = new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000);
+    const endDate = new Date(beginDate.getTime() + Math.floor(Math.random() * 48) * 60 * 60 * 1000);
+    
+    return {
+      id: i + 1,
+      parkingType: 'reservation',
+      supplierValue: randomOperator.value,
+      micrositeId: `MSITE-${Math.floor(10000 + Math.random() * 90000)}`,
+      micrositeName: `${randomOperator.label} Microsite`,
+      paymentTransactionTerminalId: `TERM-${Math.floor(1000 + Math.random() * 9000)}`,
+      paymentTransactionMerchantId: `MERCH-${Math.floor(100000 + Math.random() * 900000)}`,
+      paymentTransactionId: `PTRANS-${Math.floor(1000000 + Math.random() * 9000000)}`,
+      orderPromoCodeId: Math.random() > 0.7 ? `PROMO-${Math.floor(100 + Math.random() * 900)}` : '',
+      orderPromoCodeName: Math.random() > 0.7 ? `SUMMER${Math.floor(Math.random() * 100)}` : '',
+      orderCompletedAt: new Date(beginDate.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+      orderWorkflowState: Math.random() > 0.9 ? 'PENDING' : 'COMPLETED',
+      reservationId: `RES-${Math.floor(100000 + Math.random() * 900000)}`,
+      reservationBeginAt: beginDate.toISOString(),
+      reservationEndAt: endDate.toISOString(),
+      paymentTransactionAction: 'PURCHASE',
+      paymentTransactionSuccess: Math.random() > 0.05 ? 'TRUE' : 'FALSE',
+      paymentTransactionAmount: `€${(Math.random() * 1000).toFixed(2)}`,
+      paymentTransactionCreatedAt: new Date(beginDate.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+      paymentTransactionInstrument: Math.random() > 0.5 ? 'CREDIT_CARD' : 'PAYPAL',
+      orderId: `ORD-${Math.floor(1000000 + Math.random() * 9000000)}`,
+      paymentCode: `PC-${Math.floor(1000 + Math.random() * 9000)}`,
+      barcodeCode: `BAR-${Math.floor(10000000 + Math.random() * 90000000)}`,
+      facilityId: `FAC-${Math.floor(100 + Math.random() * 900)}`,
+      facilityName: `${randomOperator.label.split(' ')[0]} Facility`,
+      facilityCode: `FC-${Math.floor(100 + Math.random() * 900)}`,
+      facilityTimeZone: "CET",
+      companyID: `COMP-${Math.floor(100 + Math.random() * 900)}`,
+      companyName: randomOperator.label,
+      eventID: `EV-${Math.floor(1000 + Math.random() * 9000)}`,
+      eventName: `Parking Event ${Math.floor(Math.random() * 100)}`,
+      venueID: `VEN-${Math.floor(100 + Math.random() * 900)}`,
+      venueName: `${randomOperator.label.split(' ')[0]} Venue`,
+      lotID: `LOT-${Math.floor(100 + Math.random() * 900)}`,
+      lotName: `Parking Lot ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+      productID: `PROD-${Math.floor(1000 + Math.random() * 9000)}`,
+      productName: `Parking Slot ${Math.floor(Math.random() * 1000)}`,
+      productPriceCalculationType: Math.random() > 0.5 ? 'FLAT' : 'HOURLY',
+      productPricePeriodHours: `${Math.floor(Math.random() * 24) + 1}`,
+      productTypeID: `PTYPE-${Math.floor(10 + Math.random() * 90)}`,
+      productTypeName: 'RESERVATION',
+      lineItemID: `ITEM-${Math.floor(10000 + Math.random() * 90000)}`,
+      lineItemWorkflowState: 'COMPLETED',
+      lineItemTotal: `€${(Math.random() * 1000).toFixed(2)}`,
+      lineItemPrice: `€${(Math.random() * 800).toFixed(2)}`,
+      lineItemParkmobileServiceFee: `€${(Math.random() * 50).toFixed(2)}`,
+      lineItemClientServiceFee: `€${(Math.random() * 30).toFixed(2)}`,
+      lineItemDeliveryFee: `€${(Math.random() * 20).toFixed(2)}`,
+      lineItemTax: `€${(Math.random() * 100).toFixed(2)}`,
+      lineItemDiscount: `€${(Math.random() * 50).toFixed(2)}`,
+      lineItemProcessingFee: `€${(Math.random() * 25).toFixed(2)}`,
+      lineItemTransactionFee: `€${(Math.random() * 15).toFixed(2)}`,
+      amountOwedClient: `€${(Math.random() * 700).toFixed(2)}`,
+      amountOwedParkmobile: `€${(Math.random() * 300).toFixed(2)}`
+    };
+  });
+};
+
+const mockNormalTransactions = generateMockTransactions();
+const mockReservationTransactions = generateMockReservationTransactions();
 
 type TransactionTableProps = {
   title: string;
@@ -102,19 +227,26 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const [pageSize, setPageSize] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [columns, setColumns] = useState<ColumnConfig[]>(allColumns);
+  const [normalColumns, setNormalColumns] = useState<ColumnConfig[]>(allNormalColumns);
+  const [reservationColumns, setReservationColumns] = useState<ColumnConfig[]>(allReservationColumns);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [parkingType, setParkingType] = useState<'normal' | 'reservation'>('normal');
-  const [dateRange, setDateRange] = useState<DateRange>({
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     to: new Date()
   });
   
+  // Get the appropriate columns based on parking type
+  const columns = parkingType === 'normal' ? normalColumns : reservationColumns;
   const visibleColumns = columns.filter(col => col.visible);
   
-  const filteredTransactions = mockTransactions.filter(transaction => 
-    (selectedOperators.length === 0 || selectedOperators.includes(transaction.supplierValue)) &&
-    transaction.parkingType === parkingType
+  // Get the appropriate data based on parking type
+  const allTransactions = parkingType === 'normal' 
+    ? mockNormalTransactions 
+    : mockReservationTransactions;
+  
+  const filteredTransactions = allTransactions.filter(transaction => 
+    (selectedOperators.length === 0 || selectedOperators.includes(transaction.supplierValue))
   );
   
   const paginatedTransactions = filteredTransactions.slice(
@@ -125,7 +257,11 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const totalPages = Math.ceil(filteredTransactions.length / parseInt(pageSize));
   
   const handleColumnChange = (updatedColumns: ColumnConfig[]) => {
-    setColumns(updatedColumns);
+    if (parkingType === 'normal') {
+      setNormalColumns(updatedColumns);
+    } else {
+      setReservationColumns(updatedColumns);
+    }
   };
 
   const handleExportCSV = () => {
@@ -223,7 +359,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
                 className="w-[280px] justify-start text-left font-normal"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateRange.from ? (
+                {dateRange?.from ? (
                   dateRange.to ? (
                     <>
                       {format(dateRange.from, "LLL dd, y")} -{" "}
@@ -242,7 +378,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
                 mode="range"
                 selected={dateRange}
                 onSelect={(range) => {
-                  if (range) setDateRange(range);
+                  setDateRange(range);
                 }}
                 initialFocus
                 className="p-3 pointer-events-auto"
