@@ -1,6 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 // Mock data for the company hierarchy
 const mockCompanyData = {
@@ -43,23 +45,27 @@ const mockCompanyData = {
 
 // Types for the form values
 type RemittanceLevel = "company" | "facility" | "lot" | "venue";
+type RemittanceItem = { id: string; name: string; facilityId?: string; facilityName?: string };
+type RemittanceGrouping = { id: string; name: string; items: string[] };
 
 type RemittanceFormValues = {
   remittanceLevel: RemittanceLevel;
   selectedItems: Record<string, boolean>;
-  groups: Record<string, string>;
+  groups: RemittanceGrouping[];
 };
 
 export default function RemittanceConfig() {
   const navigate = useNavigate();
   const [remittanceLevel, setRemittanceLevel] = useState<RemittanceLevel>("company");
+  const [groupings, setGroupings] = useState<RemittanceGrouping[]>([]);
+  const [showGroupConfig, setShowGroupConfig] = useState(false);
   
   // Form for handling the remittance configuration
   const form = useForm<RemittanceFormValues>({
     defaultValues: {
       remittanceLevel: "company",
       selectedItems: {},
-      groups: {},
+      groups: [],
     },
   });
 
@@ -90,11 +96,58 @@ export default function RemittanceConfig() {
     
     // Reset selections when changing levels
     form.setValue("selectedItems", {});
-    form.setValue("groups", {});
+    setGroupings([]);
+    setShowGroupConfig(false);
   };
 
   // Get the current items based on the remittance level
   const currentItems = getItemsByLevel(remittanceLevel);
+
+  // Helper function to check if an item is already in a group
+  const isItemInGroup = (itemId: string) => {
+    return groupings.some(group => group.items.includes(itemId));
+  };
+
+  // Handle adding a new group
+  const addGroup = () => {
+    const newGroup: RemittanceGrouping = {
+      id: `group-${groupings.length + 1}`,
+      name: `Group ${groupings.length + 1}`,
+      items: [],
+    };
+    setGroupings([...groupings, newGroup]);
+  };
+
+  // Handle removing a group
+  const removeGroup = (groupId: string) => {
+    setGroupings(groupings.filter(group => group.id !== groupId));
+  };
+
+  // Handle adding an item to a group
+  const addItemToGroup = (groupId: string, itemId: string) => {
+    setGroupings(groupings.map(group => {
+      if (group.id === groupId) {
+        return {
+          ...group,
+          items: [...group.items, itemId],
+        };
+      }
+      return group;
+    }));
+  };
+
+  // Handle removing an item from a group
+  const removeItemFromGroup = (groupId: string, itemId: string) => {
+    setGroupings(groupings.map(group => {
+      if (group.id === groupId) {
+        return {
+          ...group,
+          items: group.items.filter(id => id !== itemId),
+        };
+      }
+      return group;
+    }));
+  };
 
   // Handle form submission
   const onSubmit = (data: RemittanceFormValues) => {
@@ -112,7 +165,7 @@ export default function RemittanceConfig() {
       items: Object.entries(data.selectedItems)
         .filter(([_, selected]) => selected)
         .map(([id]) => id),
-      groups: data.groups
+      groupings: groupings,
     };
 
     // In a real app, this would be saved to the backend
@@ -229,6 +282,123 @@ export default function RemittanceConfig() {
                             </div>
                           </Card>
                         ))}
+                      </div>
+                      
+                      {/* Grouping Configuration Section */}
+                      <div className="mt-8 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-medium">Remittance Groupings</h3>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setShowGroupConfig(!showGroupConfig)}
+                          >
+                            {showGroupConfig ? "Hide" : "Show"} Grouping Options
+                          </Button>
+                        </div>
+                        
+                        {showGroupConfig && (
+                          <div className="space-y-6 border rounded-md p-4">
+                            <p className="text-sm text-muted-foreground">
+                              Create groups to combine multiple items into a single remittance unit. 
+                              Items can only be in one group at a time.
+                            </p>
+                            
+                            <div className="flex justify-end">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={addGroup}
+                                className="flex items-center gap-2"
+                              >
+                                <Plus className="h-4 w-4" />
+                                Add Group
+                              </Button>
+                            </div>
+                            
+                            {groupings.length > 0 && (
+                              <div className="space-y-4">
+                                {groupings.map((group) => (
+                                  <Card key={group.id} className="p-4">
+                                    <div className="space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <h4 className="font-medium">{group.name}</h4>
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => removeGroup(group.id)}
+                                          className="text-destructive"
+                                        >
+                                          <Minus className="h-4 w-4 mr-1" />
+                                          Remove Group
+                                        </Button>
+                                      </div>
+                                      
+                                      <div>
+                                        <h5 className="text-sm mb-2">Add Items to Group:</h5>
+                                        
+                                        <div className="space-y-2">
+                                          {group.items.length > 0 ? (
+                                            <div className="space-y-2">
+                                              <h6 className="text-xs font-medium">Current Items:</h6>
+                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                {group.items.map((itemId) => {
+                                                  const item = currentItems.find(i => i.id === itemId);
+                                                  return item ? (
+                                                    <div key={itemId} className="flex items-center justify-between bg-muted p-2 rounded-md">
+                                                      <span className="text-xs">{item.name}</span>
+                                                      <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => removeItemFromGroup(group.id, itemId)}
+                                                        className="h-6 w-6 p-0"
+                                                      >
+                                                        <Minus className="h-3 w-3" />
+                                                      </Button>
+                                                    </div>
+                                                  ) : null;
+                                                })}
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <p className="text-xs text-muted-foreground italic">No items in this group yet</p>
+                                          )}
+                                          
+                                          <div className="mt-4">
+                                            <h6 className="text-xs font-medium mb-2">Available Items:</h6>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                              {currentItems
+                                                .filter(item => !isItemInGroup(item.id))
+                                                .map((item) => (
+                                                  <div key={item.id} className="flex items-center justify-between bg-background border p-2 rounded-md">
+                                                    <span className="text-xs">{item.name}</span>
+                                                    <Button
+                                                      type="button"
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      onClick={() => addItemToGroup(group.id, item.id)}
+                                                      className="h-6 w-6 p-0"
+                                                    >
+                                                      <Plus className="h-3 w-3" />
+                                                    </Button>
+                                                  </div>
+                                                ))}
+                                            </div>
+                                            {currentItems.filter(item => !isItemInGroup(item.id)).length === 0 && (
+                                              <p className="text-xs text-muted-foreground italic">All items have been assigned to groups</p>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Card>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
