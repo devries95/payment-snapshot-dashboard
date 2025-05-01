@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Minus, Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -353,7 +352,7 @@ export default function RemittanceConfig() {
                                           </SelectItem>
                                         ))
                                       ) : (
-                                        <SelectItem value="" disabled>
+                                        <SelectItem key="no-facilities" value="no-facilities-available" disabled>
                                           No facilities available
                                         </SelectItem>
                                       )}
