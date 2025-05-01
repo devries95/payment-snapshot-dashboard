@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import TransactionDetails from "./pages/TransactionDetails";
 import Reports from "./pages/Reports";
 import ApiDocs from "./pages/ApiDocs";
+import RemittanceConfig from "./pages/RemittanceConfig";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/transactions" element={<TransactionDetails />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/api-docs" element={<ApiDocs />} />
+          <Route path="/remittance-config" element={<RemittanceConfig />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

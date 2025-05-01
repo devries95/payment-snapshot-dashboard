@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Dashboard from '@/components/dashboard/Dashboard';
 import { Button } from '@/components/ui/button';
-import { Globe, User, FileCode } from 'lucide-react';
+import { Globe, User, FileCode, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -29,6 +29,12 @@ const Index = () => {
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Payment Dashboard</h1>
           <div className="flex items-center gap-3">
+            <Link to="/remittance-config">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Settings className="h-[1rem] w-[1rem]" />
+                <span>Remittance Config</span>
+              </Button>
+            </Link>
             <Link to="/api-docs">
               <Button variant="outline" size="sm" className="flex items-center gap-2">
                 <FileCode className="h-[1rem] w-[1rem]" />
