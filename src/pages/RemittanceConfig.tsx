@@ -1,47 +1,18 @@
 
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Save, Plus, Minus, Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-// Mock data for the company hierarchy
-const mockCompanyData = {
-  id: "company-1",
-  name: "ABC Parking Corp",
-  facilities: [
-    {
-      id: "facility-1",
-      name: "Downtown Facility",
-      lots: [
-        { id: "lot-1", name: "Lot X" },
-        { id: "lot-2", name: "Lot Y" },
-      ],
-      venues: [
-        { id: "venue-1", name: "Stadium Venue" },
-        { id: "venue-2", name: "Concert Hall" },
-      ]
-    },
-    {
-      id: "facility-2",
-      name: "Airport Facility",
-      lots: [
-        { id: "lot-3", name: "Lot Z" },
-        { id: "lot-4", name: "Lot W" },
-      ],
-      venues: [
-        { id: "venue-3", name: "Terminal Venue" }
-      ]
-    }
-  ]
-};
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // Types for the form values
 type RemittanceLevel = "company" | "facility" | "lot" | "venue";
@@ -54,11 +25,29 @@ type RemittanceFormValues = {
   groups: RemittanceGrouping[];
 };
 
+// Default company information
+const defaultCompany = {
+  id: "company-1",
+  name: "ABC Parking Corp"
+};
+
 export default function RemittanceConfig() {
   const navigate = useNavigate();
   const [remittanceLevel, setRemittanceLevel] = useState<RemittanceLevel>("company");
   const [groupings, setGroupings] = useState<RemittanceGrouping[]>([]);
   const [showGroupConfig, setShowGroupConfig] = useState(false);
+  
+  // State for user-created items
+  const [facilities, setFacilities] = useState<RemittanceItem[]>([]);
+  const [lots, setLots] = useState<RemittanceItem[]>([]);
+  const [venues, setVenues] = useState<RemittanceItem[]>([]);
+  
+  // State for adding new items
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemId, setNewItemId] = useState("");
+  const [newItemType, setNewItemType] = useState<"facility" | "lot" | "venue">("facility");
+  const [newItemParentId, setNewItemParentId] = useState<string>("");
   
   // Form for handling the remittance configuration
   const form = useForm<RemittanceFormValues>({
@@ -73,17 +62,13 @@ export default function RemittanceConfig() {
   const getItemsByLevel = (level: RemittanceLevel) => {
     switch (level) {
       case "company":
-        return [{ id: mockCompanyData.id, name: mockCompanyData.name }];
+        return [defaultCompany];
       case "facility":
-        return mockCompanyData.facilities.map(facility => ({ id: facility.id, name: facility.name }));
+        return facilities;
       case "lot":
-        return mockCompanyData.facilities.flatMap(facility => 
-          facility.lots.map(lot => ({ id: lot.id, name: lot.name, facilityId: facility.id, facilityName: facility.name }))
-        );
+        return lots;
       case "venue":
-        return mockCompanyData.facilities.flatMap(facility => 
-          facility.venues.map(venue => ({ id: venue.id, name: venue.name, facilityId: facility.id, facilityName: facility.name }))
-        );
+        return venues;
       default:
         return [];
     }
@@ -147,6 +132,75 @@ export default function RemittanceConfig() {
       }
       return group;
     }));
+  };
+
+  // Add a new item
+  const handleAddItem = () => {
+    if (!newItemName || !newItemId) {
+      toast.error("Item name and ID are required");
+      return;
+    }
+
+    const newItem = {
+      id: newItemId,
+      name: newItemName,
+    };
+
+    if (newItemType === "facility") {
+      setFacilities([...facilities, newItem]);
+    } else if (newItemType === "lot") {
+      const parentFacility = facilities.find(f => f.id === newItemParentId);
+      if (!parentFacility && newItemParentId) {
+        toast.error("Selected parent facility not found");
+        return;
+      }
+
+      setLots([...lots, {
+        ...newItem,
+        facilityId: newItemParentId,
+        facilityName: parentFacility?.name || ""
+      }]);
+    } else if (newItemType === "venue") {
+      const parentFacility = facilities.find(f => f.id === newItemParentId);
+      if (!parentFacility && newItemParentId) {
+        toast.error("Selected parent facility not found");
+        return;
+      }
+
+      setVenues([...venues, {
+        ...newItem,
+        facilityId: newItemParentId,
+        facilityName: parentFacility?.name || ""
+      }]);
+    }
+
+    // Reset form
+    setNewItemName("");
+    setNewItemId("");
+    setIsAddingItem(false);
+    toast.success(`Added new ${newItemType}: ${newItemName}`);
+  };
+
+  // Delete an item
+  const deleteItem = (level: RemittanceLevel, itemId: string) => {
+    if (level === "facility") {
+      setFacilities(facilities.filter(item => item.id !== itemId));
+      // Also delete related lots and venues
+      setLots(lots.filter(lot => lot.facilityId !== itemId));
+      setVenues(venues.filter(venue => venue.facilityId !== itemId));
+    } else if (level === "lot") {
+      setLots(lots.filter(item => item.id !== itemId));
+    } else if (level === "venue") {
+      setVenues(venues.filter(item => item.id !== itemId));
+    }
+    
+    // Remove from any groups
+    setGroupings(groupings.map(group => ({
+      ...group,
+      items: group.items.filter(id => id !== itemId)
+    })));
+    
+    toast.success("Item deleted");
   };
 
   // Handle form submission
@@ -243,163 +297,261 @@ export default function RemittanceConfig() {
                     </RadioGroup>
                   </div>
 
-                  {/* Item Selection Section (only shown for non-company levels) */}
+                  {/* Add Item Section (for non-company levels) */}
                   {remittanceLevel !== "company" && (
                     <div className="space-y-4">
-                      <h3 className="text-lg font-medium">Select Items</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Choose which items to include in remittance processing
-                      </p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {currentItems.map((item) => (
-                          <Card key={item.id} className="p-4">
-                            <div className="flex items-start space-x-3">
-                              <FormField
-                                control={form.control}
-                                name={`selectedItems.${item.id}`}
-                                render={({ field }) => (
-                                  <FormItem className="flex-1 space-y-2">
-                                    <div className="flex items-center space-x-2">
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={field.value || false}
-                                          onCheckedChange={field.onChange}
-                                        />
-                                      </FormControl>
-                                      <div>
-                                        <FormLabel className="font-medium">{item.name}</FormLabel>
-                                        {'facilityName' in item && (
-                                          <p className="text-xs text-muted-foreground">
-                                            {item.facilityName}
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </FormItem>
-                                )}
-                              />
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-medium">Manage {remittanceLevel === "facility" ? "Facilities" : remittanceLevel === "lot" ? "Lots" : "Venues"}</h3>
+                        <Dialog open={isAddingItem} onOpenChange={setIsAddingItem}>
+                          <DialogTrigger asChild>
+                            <Button>
+                              <Plus className="mr-2 h-4 w-4" />
+                              Add {remittanceLevel === "facility" ? "Facility" : remittanceLevel === "lot" ? "Lot" : "Venue"}
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Add New {remittanceLevel === "facility" ? "Facility" : remittanceLevel === "lot" ? "Lot" : "Venue"}</DialogTitle>
+                              <DialogDescription>
+                                Enter the details for the new {remittanceLevel}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                              <div className="space-y-2">
+                                <FormLabel>Name</FormLabel>
+                                <Input 
+                                  value={newItemName}
+                                  onChange={(e) => setNewItemName(e.target.value)}
+                                  placeholder={`${remittanceLevel === "facility" ? "Facility" : remittanceLevel === "lot" ? "Lot" : "Venue"} name`}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <FormLabel>ID</FormLabel>
+                                <Input 
+                                  value={newItemId}
+                                  onChange={(e) => setNewItemId(e.target.value)}
+                                  placeholder={`Unique identifier`}
+                                />
+                              </div>
+                              
+                              {/* Parent facility selection for lots and venues */}
+                              {(remittanceLevel === "lot" || remittanceLevel === "venue") && (
+                                <div className="space-y-2">
+                                  <FormLabel>Parent Facility</FormLabel>
+                                  <Select 
+                                    value={newItemParentId} 
+                                    onValueChange={setNewItemParentId}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a facility" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {facilities.length > 0 ? (
+                                        facilities.map((facility) => (
+                                          <SelectItem key={facility.id} value={facility.id}>
+                                            {facility.name}
+                                          </SelectItem>
+                                        ))
+                                      ) : (
+                                        <SelectItem value="" disabled>
+                                          No facilities available
+                                        </SelectItem>
+                                      )}
+                                    </SelectContent>
+                                  </Select>
+                                  {facilities.length === 0 && (
+                                    <FormDescription>
+                                      You need to create facilities first
+                                    </FormDescription>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                          </Card>
-                        ))}
+                            <DialogFooter>
+                              <Button variant="outline" onClick={() => setIsAddingItem(false)}>
+                                Cancel
+                              </Button>
+                              <Button onClick={handleAddItem} disabled={
+                                !newItemName || 
+                                !newItemId || 
+                                ((remittanceLevel === "lot" || remittanceLevel === "venue") && facilities.length === 0)
+                              }>
+                                Add {remittanceLevel === "facility" ? "Facility" : remittanceLevel === "lot" ? "Lot" : "Venue"}
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                       
-                      {/* Grouping Configuration Section */}
-                      <div className="mt-8 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-medium">Remittance Groupings</h3>
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => setShowGroupConfig(!showGroupConfig)}
-                          >
-                            {showGroupConfig ? "Hide" : "Show"} Grouping Options
-                          </Button>
-                        </div>
-                        
-                        {showGroupConfig && (
-                          <div className="space-y-6 border rounded-md p-4">
-                            <p className="text-sm text-muted-foreground">
-                              Create groups to combine multiple items into a single remittance unit. 
-                              Items can only be in one group at a time.
-                            </p>
-                            
-                            <div className="flex justify-end">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={addGroup}
-                                className="flex items-center gap-2"
-                              >
-                                <Plus className="h-4 w-4" />
-                                Add Group
-                              </Button>
-                            </div>
-                            
-                            {groupings.length > 0 && (
-                              <div className="space-y-4">
-                                {groupings.map((group) => (
-                                  <Card key={group.id} className="p-4">
-                                    <div className="space-y-4">
-                                      <div className="flex items-center justify-between">
-                                        <h4 className="font-medium">{group.name}</h4>
-                                        <Button
-                                          type="button"
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() => removeGroup(group.id)}
-                                          className="text-destructive"
-                                        >
-                                          <Minus className="h-4 w-4 mr-1" />
-                                          Remove Group
-                                        </Button>
+                      {/* Display existing items */}
+                      {currentItems.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {currentItems.map((item) => (
+                            <Card key={item.id} className="p-4">
+                              <div className="flex items-start justify-between">
+                                <FormField
+                                  control={form.control}
+                                  name={`selectedItems.${item.id}`}
+                                  render={({ field }) => (
+                                    <FormItem className="flex-1 space-y-2">
+                                      <div className="flex items-center space-x-2">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value || false}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <div>
+                                          <FormLabel className="font-medium">{item.name}</FormLabel>
+                                          {'facilityName' in item && item.facilityName && (
+                                            <p className="text-xs text-muted-foreground">
+                                              {item.facilityName}
+                                            </p>
+                                          )}
+                                        </div>
                                       </div>
-                                      
-                                      <div>
-                                        <h5 className="text-sm mb-2">Add Items to Group:</h5>
+                                    </FormItem>
+                                  )}
+                                />
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => deleteItem(remittanceLevel, item.id)}
+                                  className="text-destructive"
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center p-8 border rounded-md bg-muted/20">
+                          <p className="text-muted-foreground">
+                            No {remittanceLevel === "facility" ? "facilities" : remittanceLevel === "lot" ? "lots" : "venues"} created yet.
+                            Add some using the button above.
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Grouping Configuration Section */}
+                      {currentItems.length > 0 && (
+                        <div className="mt-8 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-medium">Remittance Groupings</h3>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => setShowGroupConfig(!showGroupConfig)}
+                            >
+                              {showGroupConfig ? "Hide" : "Show"} Grouping Options
+                            </Button>
+                          </div>
+                          
+                          {showGroupConfig && (
+                            <div className="space-y-6 border rounded-md p-4">
+                              <p className="text-sm text-muted-foreground">
+                                Create groups to combine multiple items into a single remittance unit. 
+                                Items can only be in one group at a time.
+                              </p>
+                              
+                              <div className="flex justify-end">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={addGroup}
+                                  className="flex items-center gap-2"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                  Add Group
+                                </Button>
+                              </div>
+                              
+                              {groupings.length > 0 && (
+                                <div className="space-y-4">
+                                  {groupings.map((group) => (
+                                    <Card key={group.id} className="p-4">
+                                      <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                          <h4 className="font-medium">{group.name}</h4>
+                                          <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => removeGroup(group.id)}
+                                            className="text-destructive"
+                                          >
+                                            <Minus className="h-4 w-4 mr-1" />
+                                            Remove Group
+                                          </Button>
+                                        </div>
                                         
-                                        <div className="space-y-2">
-                                          {group.items.length > 0 ? (
-                                            <div className="space-y-2">
-                                              <h6 className="text-xs font-medium">Current Items:</h6>
+                                        <div>
+                                          <h5 className="text-sm mb-2">Add Items to Group:</h5>
+                                          
+                                          <div className="space-y-2">
+                                            {group.items.length > 0 ? (
+                                              <div className="space-y-2">
+                                                <h6 className="text-xs font-medium">Current Items:</h6>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                  {group.items.map((itemId) => {
+                                                    const item = currentItems.find(i => i.id === itemId);
+                                                    return item ? (
+                                                      <div key={itemId} className="flex items-center justify-between bg-muted p-2 rounded-md">
+                                                        <span className="text-xs">{item.name}</span>
+                                                        <Button
+                                                          type="button"
+                                                          variant="ghost"
+                                                          size="sm"
+                                                          onClick={() => removeItemFromGroup(group.id, itemId)}
+                                                          className="h-6 w-6 p-0"
+                                                        >
+                                                          <Minus className="h-3 w-3" />
+                                                        </Button>
+                                                      </div>
+                                                    ) : null;
+                                                  })}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <p className="text-xs text-muted-foreground italic">No items in this group yet</p>
+                                            )}
+                                            
+                                            <div className="mt-4">
+                                              <h6 className="text-xs font-medium mb-2">Available Items:</h6>
                                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                                {group.items.map((itemId) => {
-                                                  const item = currentItems.find(i => i.id === itemId);
-                                                  return item ? (
-                                                    <div key={itemId} className="flex items-center justify-between bg-muted p-2 rounded-md">
+                                                {currentItems
+                                                  .filter(item => !isItemInGroup(item.id))
+                                                  .map((item) => (
+                                                    <div key={item.id} className="flex items-center justify-between bg-background border p-2 rounded-md">
                                                       <span className="text-xs">{item.name}</span>
                                                       <Button
                                                         type="button"
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => removeItemFromGroup(group.id, itemId)}
+                                                        onClick={() => addItemToGroup(group.id, item.id)}
                                                         className="h-6 w-6 p-0"
                                                       >
-                                                        <Minus className="h-3 w-3" />
+                                                        <Plus className="h-3 w-3" />
                                                       </Button>
                                                     </div>
-                                                  ) : null;
-                                                })}
+                                                  ))}
                                               </div>
+                                              {currentItems.filter(item => !isItemInGroup(item.id)).length === 0 && (
+                                                <p className="text-xs text-muted-foreground italic">All items have been assigned to groups</p>
+                                              )}
                                             </div>
-                                          ) : (
-                                            <p className="text-xs text-muted-foreground italic">No items in this group yet</p>
-                                          )}
-                                          
-                                          <div className="mt-4">
-                                            <h6 className="text-xs font-medium mb-2">Available Items:</h6>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                              {currentItems
-                                                .filter(item => !isItemInGroup(item.id))
-                                                .map((item) => (
-                                                  <div key={item.id} className="flex items-center justify-between bg-background border p-2 rounded-md">
-                                                    <span className="text-xs">{item.name}</span>
-                                                    <Button
-                                                      type="button"
-                                                      variant="ghost"
-                                                      size="sm"
-                                                      onClick={() => addItemToGroup(group.id, item.id)}
-                                                      className="h-6 w-6 p-0"
-                                                    >
-                                                      <Plus className="h-3 w-3" />
-                                                    </Button>
-                                                  </div>
-                                                ))}
-                                            </div>
-                                            {currentItems.filter(item => !isItemInGroup(item.id)).length === 0 && (
-                                              <p className="text-xs text-muted-foreground italic">All items have been assigned to groups</p>
-                                            )}
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  </Card>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                                    </Card>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </form>
