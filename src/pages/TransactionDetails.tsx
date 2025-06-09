@@ -1,8 +1,10 @@
+
 import { useNavigate } from "react-router-dom";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function TransactionDetails() {
   const navigate = useNavigate();
@@ -48,6 +50,14 @@ export default function TransactionDetails() {
               id="revenue"
             />
           </div>
+          
+          {/* Disclaimer */}
+          <Alert className="mb-6">
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              The table below displays a maximum of 5,000 rows for performance reasons. However, KPI calculations and data exports include all matching records from your query.
+            </AlertDescription>
+          </Alert>
           
           <TransactionTable title="Transactions" description="Detailed view of transactions" />
         </div>
