@@ -9,38 +9,30 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 type ExportFormat = "excel" | "csv" | "json" | "pdf";
+
+interface ScheduledDelivery {
+  id: number;
+  name: string;
+  format: ExportFormat;
+  recurrence: string;
+  time: string;
+  emails: string;
+  subject: string;
+  customMessage: string;
+  includeLinks: boolean;
+  deliveryTimeZone: string;
+  created: string;
+}
 
 interface ScheduleDeliveryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   totalCount: number;
 }
-
-// Mock scheduled deliveries data
-const mockScheduledDeliveries = [
-  {
-    id: 1,
-    name: "Daily Transaction Report",
-    format: "excel",
-    recurrence: "daily",
-    time: "8:00 am",
-    emails: "admin@company.com",
-    created: "2024-01-15"
-  },
-  {
-    id: 2,
-    name: "Weekly Summary",
-    format: "csv",
-    recurrence: "weekly",
-    time: "9:00 am", 
-    emails: "finance@company.com, manager@company.com",
-    created: "2024-01-10"
-  }
-];
 
 export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: ScheduleDeliveryDialogProps) {
   const [activeTab, setActiveTab] = useState("list");
@@ -53,6 +45,50 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
   const [customMessage, setCustomMessage] = useState("");
   const [includeLinks, setIncludeLinks] = useState(false);
   const [deliveryTimeZone, setDeliveryTimeZone] = useState("us-new-york");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  
+  // Mock scheduled deliveries data - in a real app this would come from a backend
+  const [scheduledDeliveries, setScheduledDeliveries] = useState<ScheduledDelivery[]>([
+    {
+      id: 1,
+      name: "Daily Transaction Report",
+      format: "excel",
+      recurrence: "daily",
+      time: "8:00 am",
+      emails: "admin@company.com",
+      subject: "Daily Transaction Report",
+      customMessage: "Please find the daily transaction report attached.",
+      includeLinks: false,
+      deliveryTimeZone: "us-new-york",
+      created: "2024-01-15"
+    },
+    {
+      id: 2,
+      name: "Weekly Summary",
+      format: "csv",
+      recurrence: "weekly",
+      time: "9:00 am", 
+      emails: "finance@company.com, manager@company.com",
+      subject: "Weekly Transaction Summary",
+      customMessage: "",
+      includeLinks: true,
+      deliveryTimeZone: "us-new-york",
+      created: "2024-01-10"
+    }
+  ]);
+
+  const resetForm = () => {
+    setScheduleName("");
+    setEmailAddresses("");
+    setSubject("");
+    setCustomMessage("");
+    setFormat("excel");
+    setRecurrence("daily");
+    setTime("8:00 am");
+    setIncludeLinks(false);
+    setDeliveryTimeZone("us-new-york");
+    setEditingId(null);
+  };
 
   const handleSave = () => {
     if (!scheduleName.trim()) {
@@ -60,16 +96,60 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
       return;
     }
     
-    toast.success("Delivery schedule saved", {
-      description: `${scheduleName} will be delivered ${recurrence} at ${time}`
-    });
+    if (!emailAddresses.trim()) {
+      toast.error("Please enter email addresses");
+      return;
+    }
+
+    const newDelivery: ScheduledDelivery = {
+      id: editingId || Date.now(),
+      name: scheduleName,
+      format,
+      recurrence,
+      time,
+      emails: emailAddresses,
+      subject: subject || `${scheduleName} Report`,
+      customMessage,
+      includeLinks,
+      deliveryTimeZone,
+      created: new Date().toISOString().split('T')[0]
+    };
+
+    if (editingId) {
+      setScheduledDeliveries(prev => 
+        prev.map(delivery => delivery.id === editingId ? newDelivery : delivery)
+      );
+      toast.success("Delivery schedule updated", {
+        description: `${scheduleName} has been updated successfully`
+      });
+    } else {
+      setScheduledDeliveries(prev => [...prev, newDelivery]);
+      toast.success("Delivery schedule saved", {
+        description: `${scheduleName} will be delivered ${recurrence} at ${time}`
+      });
+    }
     
-    // Reset form
-    setScheduleName("");
-    setEmailAddresses("");
-    setSubject("");
-    setCustomMessage("");
+    resetForm();
     setActiveTab("list");
+  };
+
+  const handleEdit = (delivery: ScheduledDelivery) => {
+    setScheduleName(delivery.name);
+    setFormat(delivery.format);
+    setRecurrence(delivery.recurrence);
+    setTime(delivery.time);
+    setEmailAddresses(delivery.emails);
+    setSubject(delivery.subject);
+    setCustomMessage(delivery.customMessage);
+    setIncludeLinks(delivery.includeLinks);
+    setDeliveryTimeZone(delivery.deliveryTimeZone);
+    setEditingId(delivery.id);
+    setActiveTab("settings");
+  };
+
+  const handleDelete = (id: number) => {
+    setScheduledDeliveries(prev => prev.filter(delivery => delivery.id !== id));
+    toast.success("Delivery schedule deleted");
   };
 
   const handleTestNow = () => {
@@ -79,7 +159,12 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
   };
 
   const handleCreateNew = () => {
+    resetForm();
     setActiveTab("settings");
+  };
+
+  const handleIncludeLinksChange = (checked: boolean | "indeterminate") => {
+    setIncludeLinks(checked === true);
   };
 
   return (
@@ -100,9 +185,50 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
         <div className="overflow-y-auto flex-1">
           {activeTab === "list" ? (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                No previous scheduled deliveries.
-              </p>
+              {scheduledDeliveries.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No previous scheduled deliveries.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {scheduledDeliveries.length} scheduled {scheduledDeliveries.length === 1 ? 'delivery' : 'deliveries'}
+                  </p>
+                  {scheduledDeliveries.map((delivery) => (
+                    <div key={delivery.id} className="border rounded-lg p-4 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-sm truncate">{delivery.name}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            {delivery.format.toUpperCase()} • {delivery.recurrence} at {delivery.time}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            To: {delivery.emails}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1 ml-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => handleEdit(delivery)}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive"
+                            onClick={() => handleDelete(delivery.id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               <Button 
                 onClick={handleCreateNew}
@@ -215,14 +341,14 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
                     placeholder="Add a custom message to the email"
                     rows={3}
                   />
-                  <p className="text-xs text-muted-foreground text-right">0/500</p>
+                  <p className="text-xs text-muted-foreground text-right">{customMessage.length}/500</p>
                 </div>
                 
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="include-links" 
                     checked={includeLinks}
-                    onCheckedChange={setIncludeLinks}
+                    onCheckedChange={handleIncludeLinksChange}
                   />
                   <Label htmlFor="include-links" className="text-sm">Include links</Label>
                 </div>
@@ -258,7 +384,10 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
             <div className="flex space-x-2">
               <Button
                 variant="outline"
-                onClick={() => setActiveTab("list")}
+                onClick={() => {
+                  resetForm();
+                  setActiveTab("list");
+                }}
               >
                 Cancel
               </Button>
@@ -266,7 +395,7 @@ export function ScheduleDeliveryDialog({ open, onOpenChange, totalCount }: Sched
                 onClick={handleSave}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
               >
-                Save
+                {editingId ? "Update" : "Save"}
               </Button>
             </div>
           </div>
