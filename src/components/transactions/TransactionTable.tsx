@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Filter, Settings, Download, CalendarIcon, ChevronDown, X } from "lucide-react";
 import { ColumnSettingsDrawer } from "./ColumnSettingsDrawer";
 import { ExportDialog } from "./ExportDialog";
+import { ScheduleDeliveryDialog } from "./ScheduleDeliveryDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
@@ -230,6 +231,7 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
   const [normalColumns, setNormalColumns] = useState<ColumnConfig[]>(allNormalColumns);
   const [reservationColumns, setReservationColumns] = useState<ColumnConfig[]>(allReservationColumns);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [scheduleDeliveryOpen, setScheduleDeliveryOpen] = useState(false);
   const [parkingType, setParkingType] = useState<'normal' | 'reservation'>('normal');
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -397,14 +399,28 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
           >
             <Settings className="h-4 w-4" />
           </Button>
-          <Button 
-            variant="secondary"
-            className="bg-purple-600 hover:bg-purple-700 text-white"
-            onClick={handleExportCSV}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Download CSV
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="secondary"
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV}>
+                <Download className="mr-2 h-4 w-4" />
+                Download CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setScheduleDeliveryOpen(true)}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                Schedule delivery
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
@@ -517,6 +533,12 @@ export function TransactionTable({ title, description }: TransactionTableProps) 
             description: "Your download will start shortly."
           });
         }}
+        totalCount={filteredTransactions.length}
+      />
+      
+      <ScheduleDeliveryDialog
+        open={scheduleDeliveryOpen}
+        onOpenChange={setScheduleDeliveryOpen}
         totalCount={filteredTransactions.length}
       />
     </div>
