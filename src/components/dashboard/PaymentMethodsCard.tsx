@@ -48,21 +48,23 @@ export function PaymentMethodsCard() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        {paymentMethodsData.map((method) => {
-          const Icon = method.icon;
-          return (
-            <div key={method.method} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Icon className={cn("h-4 w-4", method.color)} />
-                <div>
-                  <div className="text-sm font-medium">{method.label}</div>
-                  <div className="text-xs text-muted-foreground">{method.percentage}%</div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+          {paymentMethodsData.map((method) => {
+            const Icon = method.icon;
+            return (
+              <div key={method.method} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Icon className={cn("h-3.5 w-3.5", method.color)} />
+                  <div>
+                    <div className="text-xs font-medium">{method.label}</div>
+                    <div className="text-xs text-muted-foreground">{method.percentage}%</div>
+                  </div>
                 </div>
+                <div className="text-xs font-semibold">{method.amount}</div>
               </div>
-              <div className="text-sm font-semibold">{method.amount}</div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
         <div className="pt-2 border-t">
           <div className="flex items-center justify-between text-sm font-semibold">
             <span>Total Revenue</span>
