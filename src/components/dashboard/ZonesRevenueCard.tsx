@@ -121,7 +121,9 @@ export function ZonesRevenueCard() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Download report</DropdownMenuItem>
-              <DropdownMenuItem>View all zones</DropdownMenuItem>
+              <Link to="/zone-revenue">
+                <DropdownMenuItem>View detailed breakdown</DropdownMenuItem>
+              </Link>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -165,11 +167,11 @@ export function ZonesRevenueCard() {
               {zones.map(zone => (
                 <Link 
                   key={zone.id}
-                  to={`/transactions/${zone.id}`}
+                  to="/zone-revenue"
                   className="no-underline text-foreground"
                 >
                   <div 
-                    className={`flex items-center justify-between p-2 rounded-md transition-colors ${
+                    className={`flex items-center justify-between p-2 rounded-md transition-colors hover:bg-muted/50 ${
                       zone.isUnderperforming ? 'bg-gray-100 dark:bg-gray-800' : ''
                     }`}
                   >
