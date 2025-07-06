@@ -1,5 +1,5 @@
 
-import { MoreHorizontal, Banknote, CreditCard, Car } from "lucide-react";
+import { MoreHorizontal, Banknote, CreditCard, Car, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { 
   Card,
@@ -15,6 +15,13 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 
+type AdditionalMetric = {
+  label: string;
+  value: string;
+  trend?: 'up' | 'down';
+  trendValue?: string;
+};
+
 type StatCardProps = {
   title: string;
   value: string;
@@ -23,6 +30,7 @@ type StatCardProps = {
   id?: string;
   dateInfo?: string;
   type?: 'revenue' | 'transaction';
+  additionalMetrics?: AdditionalMetric[];
 };
 
 export function StatCard({ 
@@ -32,7 +40,8 @@ export function StatCard({
   isLoading = false, 
   id = "transactions",
   dateInfo,
-  type = 'transaction'
+  type = 'transaction',
+  additionalMetrics = []
 }: StatCardProps) {
   return (
     <Card className={cn("stat-card overflow-hidden animate-fade-in-up", className)}>
@@ -57,7 +66,7 @@ export function StatCard({
         {isLoading ? (
           <div className="h-6 w-20 bg-muted animate-pulse rounded"></div>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="text-xl font-bold">{value}</div>
               {type === 'revenue' ? (
@@ -68,6 +77,35 @@ export function StatCard({
             </div>
             {dateInfo && (
               <div className="text-xs text-muted-foreground">{dateInfo}</div>
+            )}
+            
+            {/* Additional Metrics */}
+            {additionalMetrics.length > 0 && (
+              <div className="space-y-2 pt-2 border-t">
+                {additionalMetrics.map((metric, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">{metric.label}</span>
+                      {metric.trend && (
+                        <div className={cn(
+                          "flex items-center gap-1",
+                          metric.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                        )}>
+                          {metric.trend === 'up' ? (
+                            <TrendingUp className="h-3 w-3" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3" />
+                          )}
+                          {metric.trendValue && (
+                            <span className="text-xs font-medium">{metric.trendValue}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs font-semibold">{metric.value}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}

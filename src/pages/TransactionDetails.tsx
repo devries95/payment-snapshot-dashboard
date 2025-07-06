@@ -41,6 +41,11 @@ export default function TransactionDetails() {
               dateInfo="24 May, 2023" 
               type="transaction" 
               id="transactions"
+              additionalMetrics={[
+                { label: "Avg. per hour", value: "52", trend: "up", trendValue: "+8%" },
+                { label: "Peak hour", value: "14:00", trend: "up", trendValue: "127" },
+                { label: "Success rate", value: "98.2%" }
+              ]}
             />
             <StatCard 
               title="Today's Revenue" 
@@ -48,6 +53,11 @@ export default function TransactionDetails() {
               dateInfo="24 May, 2023" 
               type="revenue" 
               id="revenue"
+              additionalMetrics={[
+                { label: "Avg. transaction", value: "€26.20", trend: "up", trendValue: "+12%" },
+                { label: "Largest payment", value: "€458.90" },
+                { label: "vs. yesterday", value: "+€2,105", trend: "up", trendValue: "+6.9%" }
+              ]}
             />
             <PaymentMethodsCard />
           </div>
