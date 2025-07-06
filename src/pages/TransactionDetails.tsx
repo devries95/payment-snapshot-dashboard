@@ -1,8 +1,10 @@
+
 import { useNavigate } from "react-router-dom";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { PaymentMethodsCard } from "@/components/dashboard/PaymentMethodsCard";
 
 export default function TransactionDetails() {
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ export default function TransactionDetails() {
           </div>
           
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <StatCard 
               title="Today's Transactions" 
               value="1,245" 
@@ -47,6 +49,7 @@ export default function TransactionDetails() {
               type="revenue" 
               id="revenue"
             />
+            <PaymentMethodsCard />
           </div>
           
           <div className="space-y-2">
